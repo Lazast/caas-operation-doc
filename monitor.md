@@ -4,35 +4,33 @@
 
 ### 架构图
 
-![](pic/monitor/architecture.png)
-
-
+![](.gitbook/assets/architecture.png)
 
 #### 基本架构
 
 Prometheus生态包括了很多组件，它们中的一些是可选的：
 
-- 主服务Prometheus Server负责抓取和存储时间序列数据
-- 客户库负责检测应用程序代码
-- 支持短生命周期的PUSH网关
-- 基于Rails/SQL仪表盘构建器的GUI
-- 多种导出工具，可以支持Prometheus存储数据转化为HAProxy、StatsD、Graphite等工具所需要的数据存储格式
-- 警告管理器
-- 命令行查询工具
-- 其他各种支撑工具
-- 多数Prometheus组件是Go语言写的，这使得这些组件很容易编译和部署。
+* 主服务Prometheus Server负责抓取和存储时间序列数据
+* 客户库负责检测应用程序代码
+* 支持短生命周期的PUSH网关
+* 基于Rails/SQL仪表盘构建器的GUI
+* 多种导出工具，可以支持Prometheus存储数据转化为HAProxy、StatsD、Graphite等工具所需要的数据存储格式
+* 警告管理器
+* 命令行查询工具
+* 其他各种支撑工具
+* 多数Prometheus组件是Go语言写的，这使得这些组件很容易编译和部署。
 
 #### 特征
 
 Prometheus的主要特征有：
 
-- 多维度数据模型
-- 灵活的查询语言
-- 不依赖分布式存储，单个服务器节点是自主的
-- 以HTTP方式，通过pull模型拉去时间序列数据
-- 也通过中间网关支持push模型
-- 通过服务发现或者静态配置，来发现目标服务对象
-- 支持多种多样的图表和界面展示，grafana也支持它
+* 多维度数据模型
+* 灵活的查询语言
+* 不依赖分布式存储，单个服务器节点是自主的
+* 以HTTP方式，通过pull模型拉去时间序列数据
+* 也通过中间网关支持push模型
+* 通过服务发现或者静态配置，来发现目标服务对象
+* 支持多种多样的图表和界面展示，grafana也支持它
 
 ## 容器平台应用
 
@@ -44,53 +42,49 @@ Prometheus的主要特征有：
 
 访问prometheus地址，能够正常显示下图界面且prometheus命名空间下该容器日志未报异常即可
 
-![](pic/monitor/health_check.png)
+![](.gitbook/assets/health_check.png)
 
 ## prometheus监控客户端健康检查
 
-访问http://prometheus_url/targets，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus server可以从该地址提供的api拉取数据。
+访问[http://prometheus\_url/targets，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus](http://prometheus_url/targets，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus) server可以从该地址提供的api拉取数据。
 
-![](pic/monitor/target_check.png)
+![](.gitbook/assets/target_check.png)
 
 ## promdash使用说明
 
 1. 菜单栏分为五个标签
+   * prometheus：选择该标签进入dashboard首页，可以生成简易图表，通过选择“insert metric at cursor”可以选择prometheus server所采集的所有指标，通过promQL可以组合成你想要的数据
 
-   -  prometheus：选择该标签进入dashboard首页，可以生成简易图表，通过选择“insert metric at cursor”可以选择prometheus server所采集的所有指标，通过promQL可以组合成你想要的数据
+     ![](.gitbook/assets/dashboard.bin)
 
-     ![](pic/monitor/dashboard)
+   * alerts：容器平台生成的报警规则及后台自行创建的报警规则都会在这里展示
 
-   - alerts：容器平台生成的报警规则及后台自行创建的报警规则都会在这里展示
+     ![](.gitbook/assets/alertmanger.png)
 
-     ![](pic/monitor/alertmanger.png)
-
-   - graph：同prometheus菜单
-
-   - status：状态菜单分四个5个子菜单。
-
-     - runtime & build information：运行状态及构建信息
-     - Conmmand-line：prometheus启动运行参数
-     - configuration：prometheus配置文件
-     - rules：设定的报警规则
-     - Targets：客户端状态及元数据
-
-   - help：跳转至官方网站
+   * graph：同prometheus菜单
+   * status：状态菜单分四个5个子菜单。
+     * runtime & build information：运行状态及构建信息
+     * Conmmand-line：prometheus启动运行参数
+     * configuration：prometheus配置文件
+     * rules：设定的报警规则
+     * Targets：客户端状态及元数据
+   * help：跳转至官方网站
 
 ## 配置项说明
 
-prometheus server配置文件目录地址为openshift-prometheus-configmap下的prometheus-config。通过修改该configmap即修改prometheus server配置。Prometheus可以通过命令行参数和配置文件来配置它的服务参数。命令行主要用于配置系统参数（例如：存储位置，保留在磁盘和内存中的数据量大小等），配置文件主要用于配置与抓取任务和任务下的实例相关的所有内容, 并且加载指定的抓取规则file。可以通过运行prometheus -h命令, 查看Prometheus服务所有可用的命令行参数，Prometheus服务可以reload它的配置。如果这个配置错误，则更改后的配置不生效。配置reolad是通过给Prometheus服务发送信号量SIGHUP或者通过http发送一个post请求到/-/reload。这也会重载所有配置的规则文件(rule files)。这个配置文件是[YAML](http://en.wikipedia.org/wiki/YAML)格式， 通过下面描述的范式定义, 括号表示参数是可选的。对于非列表参数，这个值被设置了默认值。
+prometheus server配置文件目录地址为openshift-prometheus-configmap下的prometheus-config。通过修改该configmap即修改prometheus server配置。Prometheus可以通过命令行参数和配置文件来配置它的服务参数。命令行主要用于配置系统参数（例如：存储位置，保留在磁盘和内存中的数据量大小等），配置文件主要用于配置与抓取任务和任务下的实例相关的所有内容, 并且加载指定的抓取规则file。可以通过运行prometheus -h命令, 查看Prometheus服务所有可用的命令行参数，Prometheus服务可以reload它的配置。如果这个配置错误，则更改后的配置不生效。配置reolad是通过给Prometheus服务发送信号量SIGHUP或者通过http发送一个post请求到/-/reload。这也会重载所有配置的规则文件\(rule files\)。这个配置文件是[YAML](http://en.wikipedia.org/wiki/YAML)格式， 通过下面描述的范式定义, 括号表示参数是可选的。对于非列表参数，这个值被设置了默认值。
 
 通用占位符由下面定义：
 
-- `\<boolean\>`: 一个布尔值，包括`true`或者`false`.
-- `\<duration\>`: 持续时间，与正则表达式`[0-9]+(ms|smhdwy)`匹配
-- `\<labelname\>`: 一个与正则表达式`[a-zA-Z_][a-zA-Z0-9_]*`匹配的字符串
-- `\<labelvalue\>`: 一个为unicode字符串
-- `\<filename\>`: 当前工作目录下的有效路径
-- `\<host\>`: 一个包含主机名或者IP地址，并且可以带上一个非必需的端口号的有效字符串
-- `\<path\>`: 一个有效的URL路径
-- `\<scheme\>`: 一个可以是`http`或者`https`的字符串
-- `\<string\>`: 一个正则表达式字符串
+* `\<boolean\>`: 一个布尔值，包括`true`或者`false`.
+* `\<duration\>`: 持续时间，与正则表达式`[0-9]+(ms|smhdwy)`匹配
+* `\<labelname\>`: 一个与正则表达式`[a-zA-Z_][a-zA-Z0-9_]*`匹配的字符串
+* `\<labelvalue\>`: 一个为unicode字符串
+* `\<filename\>`: 当前工作目录下的有效路径
+* `\<host\>`: 一个包含主机名或者IP地址，并且可以带上一个非必需的端口号的有效字符串
+* `\<path\>`: 一个有效的URL路径
+* `\<scheme\>`: 一个可以是`http`或者`https`的字符串
+* `\<string\>`: 一个正则表达式字符串
 
 全局配置指定的参数，在其他上下文配置中是生效的。这也默认这些全局参数在其他配置区域有效。
 
@@ -217,7 +211,6 @@ scrape_configs:
     - targets: ['10.74.248.235:9100']
       labels:
         alias: node3
-
 ```
 
 1. 配置文件全局
@@ -253,7 +246,7 @@ alerting:
     [ - <alertmanager_config> ... ]
 ```
 
-2. scrape_config中配置详解
+1. scrape\_config中配置详解
 
 ```yaml
 # 默认下任务名称赋值给要抓取的度量指标
@@ -333,51 +326,40 @@ metric_relabel_configs:
 
 1. 节点node：这个node角色发现带有地址的每一个集群节点一个目标，都指向Kublelet的HTTP端口。这个目标地址默认为Kubernetes节点对象的第一个现有地址，地址类型为NodeInernalIP, NodeExternalIP, NodeLegacyHostIP和NodeHostName。可用的meta标签：
 
-
-- __meta_kubernetes_node_name: 节点对象的名称
-
-- __meta_kubernetes_node_label_<labelname>: 节点对象的每个标签
-- __meta_kubernetes_node_annotation_<annotationname>: 节点对象的每个注释 _meta_kubernetes_node_address<address_type>: 如果存在，每一个节点对象类型的第一个地址
-- 另外，对于节点的instance标签，将会被设置成从API服务中获取的节点名称。
-
-2. 服务service：对于每个服务每个服务端口，service角色发现一个目标。对于一个服务的黑盒监控是通常有用的。这个地址被设置成这个服务的Kubernetes DNS域名, 以及各自的服务端口。可用的meta标签：
-
-- __meta_kubernetes_namespace: 服务对象的命名空间
-
-- __meta_kubernetes_service_name: 服务对象的名称
-- __meta_kubernetes_service_label_<labelname>: 服务对象的标签。
-- __meta_kubernetes_service_annotation_<annotationname>: 服务对象的注释
-- __meta_kubernetes_service_port_name: 目标服务端口的名称
-- __meta_kubernetes_service_port_number: 目标服务端口的数量
-- __meta_kubernetes_service_port_portocol: 目标服务端口的协议
-
-3. pod：pod角色发现所有的pods，并暴露它们的容器作为目标。对于每一个容器的声明端口，单个目标被生成。 如果一个容器没有指定端口，每个容器的无端口目标都是通过relabeling手动添加端口而创建的。可用的meta标签：
-
-- __meta_kubernetes_namespace: pod对象的命名空间
-
-- __meta_kubernetes_pod_name: pod对象的名称
-- __meta_kubernetes_pod_ip: pod对象的IP地址
-- __meta_kubernetes_pod_label_<labelname>: pod对象的标签
-- __meta_kubernetes_pod_annotation_<annotationname>: pod对象的注释
-- __meta_kubernetes_pod_container_name: 目标地址的容器名称
-- __meta_kubernetes_pod_container_port_name: 容器端口名称
-- __meta_kubernetes_pod_container_port_number: 容器端口的数量
-- __meta_kubernetes_pod_container_port_protocol: 容器端口的协议
-- __meta_kubernetes_pod_ready: 设置pod ready状态为true或者false
-- __meta_kubernetes_pod_node_name: pod调度的node名称
-- __meta_kubernetes_pod_host_ip: 节点对象的主机IP
-
-4. endpoints端点：endpoints角色发现来自于一个服务的列表端点目标。对于每一个终端地址，一个目标被一个port发现。如果这个终端被写入到pod中，这个节点的所有其他容器端口，未绑定到端点的端口，也会被目标发现。可用的meta标签：
-
-- __meta_kubernetes_namespace: 端点对象的命名空间
-- __meta_kubernetes_endpoints_name: 端点对象的名称
-- 对于直接从端点列表中获取的所有目标，下面的标签将会被附加上。
-- __meta_kubernetes_endpoint_ready: endpoint ready状态设置为true或者false。
-- __meta_kubernetes_endpoint_port_name: 端点的端口名称
-- __meta_kubernetes_endpoint_port_protocol: 端点的端口协议
-
-- 如果端点属于一个服务，这个角色的所有标签：服务发现被附加上。
-- 对于在pod中的所有目标，这个角色的所有标签：pod发现被附加上
+* \_\_meta\_kubernetes\_node\_name: 节点对象的名称
+* _\_meta\_kubernetes\_node\_label_: 节点对象的每个标签
+* _\_meta\_kubernetes\_node\_annotation_: 节点对象的每个注释 \_meta\_kubernetes\_node\_address: 如果存在，每一个节点对象类型的第一个地址
+* 另外，对于节点的instance标签，将会被设置成从API服务中获取的节点名称。
+* 服务service：对于每个服务每个服务端口，service角色发现一个目标。对于一个服务的黑盒监控是通常有用的。这个地址被设置成这个服务的Kubernetes DNS域名, 以及各自的服务端口。可用的meta标签：
+* \_\_meta\_kubernetes\_namespace: 服务对象的命名空间
+* \_\_meta\_kubernetes\_service\_name: 服务对象的名称
+* _\_meta\_kubernetes\_service\_label_: 服务对象的标签。
+* _\_meta\_kubernetes\_service\_annotation_: 服务对象的注释
+* \_\_meta\_kubernetes\_service\_port\_name: 目标服务端口的名称
+* \_\_meta\_kubernetes\_service\_port\_number: 目标服务端口的数量
+* \_\_meta\_kubernetes\_service\_port\_portocol: 目标服务端口的协议
+* pod：pod角色发现所有的pods，并暴露它们的容器作为目标。对于每一个容器的声明端口，单个目标被生成。 如果一个容器没有指定端口，每个容器的无端口目标都是通过relabeling手动添加端口而创建的。可用的meta标签：
+* \_\_meta\_kubernetes\_namespace: pod对象的命名空间
+* \_\_meta\_kubernetes\_pod\_name: pod对象的名称
+* \_\_meta\_kubernetes\_pod\_ip: pod对象的IP地址
+* _\_meta\_kubernetes\_pod\_label_: pod对象的标签
+* _\_meta\_kubernetes\_pod\_annotation_: pod对象的注释
+* \_\_meta\_kubernetes\_pod\_container\_name: 目标地址的容器名称
+* \_\_meta\_kubernetes\_pod\_container\_port\_name: 容器端口名称
+* \_\_meta\_kubernetes\_pod\_container\_port\_number: 容器端口的数量
+* \_\_meta\_kubernetes\_pod\_container\_port\_protocol: 容器端口的协议
+* \_\_meta\_kubernetes\_pod\_ready: 设置pod ready状态为true或者false
+* \_\_meta\_kubernetes\_pod\_node\_name: pod调度的node名称
+* \_\_meta\_kubernetes\_pod\_host\_ip: 节点对象的主机IP
+* endpoints端点：endpoints角色发现来自于一个服务的列表端点目标。对于每一个终端地址，一个目标被一个port发现。如果这个终端被写入到pod中，这个节点的所有其他容器端口，未绑定到端点的端口，也会被目标发现。可用的meta标签：
+* \_\_meta\_kubernetes\_namespace: 端点对象的命名空间
+* \_\_meta\_kubernetes\_endpoints\_name: 端点对象的名称
+* 对于直接从端点列表中获取的所有目标，下面的标签将会被附加上。
+* \_\_meta\_kubernetes\_endpoint\_ready: endpoint ready状态设置为true或者false。
+* \_\_meta\_kubernetes\_endpoint\_port\_name: 端点的端口名称
+* \_\_meta\_kubernetes\_endpoint\_port\_protocol: 端点的端口协议
+* 如果端点属于一个服务，这个角色的所有标签：服务发现被附加上。
+* 对于在pod中的所有目标，这个角色的所有标签：pod发现被附加上
 
 ```yaml
 # The information to access the Kubernetes API.

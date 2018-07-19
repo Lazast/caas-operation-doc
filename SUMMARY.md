@@ -5,4 +5,5 @@
 * [Basics](basics.md)
 * [OpenShiftWebConsole](openshiftwebconsole.md)
 * [OpenShiftCLI](openshiftcli.md)
+* [ldap](ldap.md)
 

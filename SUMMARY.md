@@ -2,4 +2,5 @@
 
 * [README](README.md)
 * [Intrudoction](intrudoction.md)
+* [Basics](basics.md)
 

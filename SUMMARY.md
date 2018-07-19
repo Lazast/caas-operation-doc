@@ -7,4 +7,5 @@
 * [OpenShiftCLI](openshiftcli.md)
 * [ldap](ldap.md)
 * [Harbor](harbor.md)
+* [Prometheus](prometheus.md)
 

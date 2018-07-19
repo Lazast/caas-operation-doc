@@ -6,4 +6,5 @@
 * [OpenShiftWebConsole](openshiftwebconsole.md)
 * [OpenShiftCLI](openshiftcli.md)
 * [ldap](ldap.md)
+* [Harbor](harbor.md)
 

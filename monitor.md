@@ -4,6 +4,8 @@
 
 # Monitor
 
+容器平台监控预警模块采用prometheus、alertmanager来实现。prometheus作为监控系统及时间序列数据库（数据存储格式）。alertmanager作为报警组件。grafana作为监控数据展示组件。
+
 ## prometheus架构及基本概念
 
 ### 架构图
@@ -203,6 +205,8 @@ prometheus、alertmanager、grafana均采用容器方式部署在openshift平台
 通过查看服务日志，我们可以判断服务是否出现异常。重新部署服务只需删除当前pod即可自动生成新的pod，配置及数据均有持久化卷保存。服务启动后会自行恢复数据。如需修改运行参数，可以通过修改deployment的方式进行修改。
 
 （openshift webconsole及cli操作详见其文档）
+
+# 相关资料补充
 
 ## Prometheus server配置项说明
 

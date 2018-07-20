@@ -36,6 +36,10 @@ Prometheus的主要特征有：
 * 通过服务发现或者静态配置，来发现目标服务对象
 * 支持多种多样的图表和界面展示，grafana也支持它
 
+### label特性及使用
+
+prometheus每一条监控数据格式类似于metrics{label1=value1,label2=value2}。metrics为监控指标名，包含其监控项，例如node_cpu代表主机cpu使用时间。label代表具体实例信息，例如instance=192.168.1.100、mode=idle，可以得知此条监控数据是ip为192.168.1.100主机CPU的空闲时间。通过label，我们可以将相同名称的指标实例化具体对象，从而可以数据代表的意义，也可以在查询时通过label作为筛选器进行数据筛选。label的使用在openshift中也有广泛的应用，每一类对象均可以定义，并使用。通过选择器指定label，筛选出想要得到的结果。
+
 ### 容器平台应用
 
 1. 容器平台中的监控模块采用prometheus server作为监控主体，报警模块采用alertmanager作为主体。grafana作为运维使用监控openshift集群及集群主机展示主体
@@ -50,7 +54,7 @@ Prometheus的主要特征有：
 
 ### prometheus监控客户端健康检查
 
-访问[http://prometheus\_url/targets，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus](http://prometheus_url/targets，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus) server可以从该地址提供的api拉取数据。
+访问http://prometheus_url/，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus 可以从该地址提供的api拉取数据。
 
 ![](.gitbook/assets/target_check.png)
 
@@ -66,13 +70,15 @@ Prometheus的主要特征有：
      ![](.gitbook/assets/alertmanger.png)
 
    * graph：同prometheus菜单
-   * status：状态菜单分四个5个子菜单。
+
+   * status：状态菜单分为5个子菜单
      * runtime & build information：运行状态及构建信息
      * Conmmand-line：prometheus启动运行参数
      * configuration：prometheus配置文件
      * rules：设定的报警规则
      * Targets：客户端状态及元数据
-   * help：跳转至官方网站
+
+   * help：跳转至官方网站，可以查看prometheus相关说明及使用文档等
 
 ## Alertmanager报警模块
 
@@ -168,11 +174,11 @@ receivers:
 
 ### Alertmanager 工作原理简述
 
-prometheus server作为监控端服务需要配置相应报警规则模板，当设定指标符合报警条件时，会将报警信息发送至alertmanager进行处理，根据alertmanager配置策略进行报警。涵盖{"platform":"k8s"}标签的报警数据将转由caas平台处理并发送报警信息至通讯媒介（目前支持邮件及手机短信方式，需提供相应服务信息）。容器平台可以创建平台部署容器的相关报警项及其阈值。运维管理人员可以通过手动添加方式将报警模板加到prometheus server持久化卷中。添加后需要通过使用post调用http://prometheus_url/-/reload接口进行热更新。
+prometheus server作为监控端服务需要配置相应报警规则模板，当设定指标符合报警条件时，会将报警信息发送至alertmanager进行处理，根据alertmanager配置策略进行报警。涵盖{"platform":"k8s"}标签的报警数据将转由caas平台处理并发送报警信息至通讯媒介（目前支持邮件及手机短信方式，需提供相应服务信息）容器平台可以创建平台部署容器的相关报警项及其阈值。运维管理人员可以通过手动添加方式将报警模板加到prometheus server持久化卷中。添加后需要通过使用post调用http://prometheus_url/-/reload接口进行热更新。
 
 ## Grafana 展示监控数据
 
-部署完成后默认提供两个dashboard，分别为openshift集群监控以及集群主机监控。grafana仅作为数据展示，暂未使用其他功能。例如报警模块使用prometheus原生报警组件alertmanager。
+部署完成后默认提供两个dashboard，分别为openshift集群监控以及集群主机监控。grafana仅作为数据展示，暂未使用其他功能。例如报警模块使用prometheus原生报警组件alertmanager。grafana提供了丰富的数据展示功能，包括选定特定时间端查看数据，选定不同监控对象（同时查看多个主机数据或指定特定对象）等等。通过调节可视化展示面板即可。
 
 ### openshift集群监控
 
@@ -185,6 +191,18 @@ prometheus server作为监控端服务需要配置相应报警规则模板，当
 集群主机监控涵盖管理节点及计算节点的机器信息，cpu/mem/网络io/磁盘io/其他主机指标。
 
 ![](pic/monitor/node_exporter.png)
+
+## 组件日志及其运维
+
+### 日志
+
+prometheus、alertmanager、grafana均采用容器方式部署在openshift平台中，命名空间为prometheus。查看组件日志可以通过登录webconsole后选择prometheus命名空间，查看pod资源，选择日志标签即可通过websocket方式读取日志。选择终端标签可以登录到容器内进行调试排查。openshift cli方式详见openshift cli文档部分
+
+### 运维
+
+通过查看服务日志，我们可以判断服务是否出现异常。重新部署服务只需删除当前pod即可自动生成新的pod，配置及数据均有持久化卷保存。服务启动后会自行恢复数据。如需修改运行参数，可以通过修改deployment的方式进行修改。
+
+（openshift webconsole及cli操作详见其文档）
 
 ## Prometheus server配置项说明
 
@@ -506,5 +524,48 @@ basic_auth:
 # TLS configuration.
 tls_config:
   [ <tls_config> ]
+```
+
+## alertmanager报警规则模板
+
+警报规则允许你基于Prometheus表达式语言的表达式定义报警报条件，并在触发警报时发送通知给外部的接收者。每当警报表达式在给定时间点产生一个或者多个向量元素，这个警报统计活跃的这些元素标签集。警报规则在Prometheus系统中用同样的record rules方式进行配置。
+
+### 定义报警规则
+
+警报规则的定义遵循下面的风格：
+
+```
+ALERT <alert name>
+  IF <expression>
+    [ FOR <duration> ]
+      [ LABELS <label set> ]
+        [ ANNOTATIONS <label set> ]
+```
+
+- `FOR`选项语句会使Prometheus服务等待指定的时间, 在第一次遇到新的表达式输出向量元素（如：具有高HTTP错误率的实例）之间，并将该警报统计为该元素的触发。如果该元素的活跃的，且尚未触发，表示正在挂起状态。
+- `LABELS`选项语句允许指定额外的标签列表，把它们附加在警告上。任何已存在的冲突标签会被重写。这个标签值能够被模板化。
+- `ANNOTATIONS`选项语句指定了另一组标签，它们不被当做警告实例的身份标识。它们经常用于存储额外的信息，例如：警告描述，后者runbook链接。这个注释值能够被模板化
+
+### 示例模板
+
+```
+# Alert for any instance that is unreachable for >5 minutes.
+ALERT InstanceDown
+  IF up == 0
+    FOR 5m
+      LABELS { severity = "page" }
+        ANNOTATIONS {
+                summary = "Instance {{ $labels.instance }} down",
+                    description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.",
+                      }
+
+# Alert for any instance that have a median request latency >1s.
+ALERT APIHighRequestLatency
+  IF api_http_request_latencies_second{quantile="0.5"} > 1
+    FOR 1m
+      ANNOTATIONS {
+              summary = "High request latency on {{ $labels.instance }}",
+                  description = "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)",
+                    }
 ```
 

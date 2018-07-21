@@ -2,7 +2,8 @@
 # 简介 #
 ## 安装 ##
 
-v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，根据客户端系统、OpenShift服务端版本选择对应的文件(client-tools)下载，请保持客户端文件和服务端版本一致；其他版本见：https://github.com/openshift/origin/tags
+v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，
+根据客户端系统、OpenShift服务端版本选择对应的文件(client-tools)下载，请保持客户端文件和服务端版本一致；其他版本见：https://github.com/openshift/origin/tags
 
 
 *备注:OpenShift集群中的node和master上可以直接使用*

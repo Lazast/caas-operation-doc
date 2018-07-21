@@ -11,8 +11,8 @@ v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，�
 ### windows安装 ###
 
 解压下载的安装文件
-复制oc.exe到c:\Windows\system32\下,出现下图提示是点击继续
-![](pic/OpenShiftCLI/oc-install.png)
+复制oc.exe到c:\Windows\system32\下,出现下图提示时点击继续
+![](./pic/OpenShiftCLI/oc-install.png)
 
 在命令行中就可以使用oc命令了
 

@@ -2,8 +2,7 @@
 # 简介 #
 ## 安装 ##
 
-v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，
-根据客户端系统、OpenShift服务端版本选择对应的文件(client-tools)下载，请保持客户端文件和服务端版本一致；其他版本见：https://github.com/openshift/origin/tags
+v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，根据客户端系统、OpenShift服务端版本选择对应的文件(client-tools)下载，请保持客户端文件和服务端版本一致；其他版本见：https://github.com/openshift/origin/tags
 
 
 *备注:OpenShift集群中的node和master上可以直接使用*
@@ -48,9 +47,108 @@ v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，
 直接输入 `oc logout` 就能退出登录
 # 常用管理命令 #
 ## 节点管理 ##
-### 列出节点 ###
-#### 获取集群所有节点信息 ####
+### 获取集群所有节点信息 ###
+	[root@master1 ~]# oc get nodes
+	NAME      STATUS    ROLES     AGE       VERSION
+	master1   Ready     master    10d       v1.9.1+a0ce1bc657
+	master2   Ready     master    10d       v1.9.1+a0ce1bc657
+	master3   Ready     master    10d       v1.9.1+a0ce1bc657
+	node1     Ready     compute   10d       v1.9.1+a0ce1bc657
+	node2     Ready     compute   10d       v1.9.1+a0ce1bc657
+	node3     Ready     compute   10d       v1.9.1+a0ce1bc657
 
+### 获取单个节点的信息 ###
+
+	[root@master1 ~]# oc get node node1
+	NAME      STATUS    ROLES     AGE       VERSION
+	node1     Ready     compute   10d       v1.9.1+a0ce1bc657
+
+备注： 获取具体node的详细信息执行命令 `oc describe node node1`
+### 查看节点上运行的pod ###
+	[root@master1 ~]# oc adm manage-node --list-pods node1
+	
+	Listing matched pods on node: node1
+	
+	NAMESPACE    NAME                         READY     STATUS    RESTARTS   AGE
+	caasportal   caas-agamaha-1-4tx8s         1/1       Running   0          9d
+	caasportal   caas-omp-2-z7jkb             1/1       Running   0          9d
+	caasportal   caas-redis-1-498f4           1/1       Running   0          9d
+	logging      logging-fluentd-ccjrn        1/1       Running   0          10d
+	logging      logging-kibana-ops-1-2d542   2/2       Running   0          10d
+	pp3prd       ldapapp-2-wrss6              1/1       Running   0          8d
+	prometheus   alertmanager-1-td2p2         1/1       Running   0          8d
+	prometheus   prometheus-1-m847x           1/1       Running   0          8d
+### 查看节点上运行的pod的资源使用情况 ###
+
+	[root@master1 ~]# oc describe nodes node1|awk '/Non-terminated Pods/,/Allocated resources/'
+	Non-terminated Pods:         (8 in total)
+	  Namespace                  Name                          CPU Requests  CPU Limits  Memory Requests  Memory Limits
+	  ---------                  ----                          ------------  ----------  ---------------  -------------
+	  caasportal                 caas-agamaha-1-4tx8s          120m (1%)     500m (6%)   1Gi (6%)         2Gi (12%)
+	  caasportal                 caas-omp-2-z7jkb              2 (25%)       4 (50%)     4Gi (25%)        8Gi (51%)
+	  caasportal                 caas-redis-1-498f4            125m (1%)     1 (12%)     2Gi (12%)        2Gi (12%)
+	  logging                    logging-fluentd-ccjrn         100m (1%)     0 (0%)      512Mi (3%)       512Mi (3%)
+	  logging                    logging-kibana-ops-1-2d542    200m (2%)     0 (0%)      992Mi (6%)       992Mi (6%)
+	  pp3prd                     ldapapp-2-wrss6               125m (1%)     1 (12%)     1Gi (6%)         1Gi (6%)
+	  prometheus                 alertmanager-1-td2p2          100m (1%)     1 (12%)     100Mi (0%)       2500Mi (15%)
+	  prometheus                 prometheus-1-m847x            1 (12%)       8 (100%)    2Gi (12%)        4Gi (25%)
+	Allocated resources:
+
+### 查看节点的资源使用情况 ###
+	[root@master1 ~]# oc describe nodes node1 |grep 'Allocated resources:' -A 5
+	Allocated resources:
+	  (Total limits may be over 100 percent, i.e., overcommitted.)
+	  CPU Requests  CPU Limits     Memory Requests  Memory Limits
+	  ------------  ----------     ---------------  -------------
+	  3770m (47%)   15500m (193%)  11844Mi (75%)    21412Mi (135%)
+	Events:         <none>
+
+### 统计集群内各命名空间下的pod数量 ###
+	[root@master1 ~]# oc get pods -o wide --all-namespaces --no-headers|awk '{print $1}'|sort |uniq -c|sort -k1nr 
+	     12 logging
+	      6 caasportal
+	      5 default
+	      3 openshift-web-console
+	      3 prometheus
+	      2 test3ppdev
+	      1 pp3prd
+
+### 删除节点 ###
+步骤：
+
+1. 设置要删除的节点为不可调度
+
+	`oadm manage-node node1 --schedulable=false`
+
+2. 迁移要删除的节点上的pod到集群里其他节点上
+	
+	`oc adm drain node1` 
+
+3. 删除node
+
+    `oc delete node node1`
+
+4. 检查node是否已经被删除
+
+    `oc get nodes`
+
+### 新增节点 ###
+步骤：
+
+1. 在部署机（默认master1)上的inventory文件的[OSEv3:children]下增加新的组new_nodes
+2. 在部署机（默认master1)上的inventory文件中添加组new_nodes,并把需要添加的追加信息增加到该组里
+3. 在新增加的节点上执行需要节点初始化需要的工作
+	- 	开启selinux
+	-     划分磁盘分区
+	-     安装docker
+	-     配置yum源
+	-     安装需要的系统依赖包
+
+4. 在部署机上执行增加节点的ansible脚本
+
+    `ansible-playbook -i <inventory文件绝对路径> <存放部署脚本的路径>/openshift-ansible/playbooks/openshift-node/scaleup.yml`
+
+5. 脚本执行完成后执行`oc get nodes` 查看时候有新加的节点
 
 
 # 基本命令 #
@@ -105,7 +203,29 @@ v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，
 
 **使用示例**
 
-       
+	  # 查看能创建应用的is和template
+	  oc new-app --list
+	  
+	  # 以当前的git仓库和镜像创建应用
+	  oc new-app . --docker-image=repo/langimage
+	  
+	  # 使用提供的镜像和代码库创建应用
+	  oc new-app centos/ruby-22-centos7~https://github.com/openshift/ruby-ex.git
+
+	  
+	  # 从私有仓库创建一个应用
+	  oc new-app --docker-image=myregistry.com/mycompany/mysql --name=private
+	  
+	  # 使用远程代码的beta4分支创建应用
+	  oc new-app https://github.com/openshift/ruby-hello-world#beta4
+	  
+	  # 使用本地模板创建一个应用，并设置一个环境变量
+	  oc new-app --template=ruby-helloworld-sample --param=MYSQL_USER=admin
+	  
+	  
+	  # 使用远程私有git库和密码信息创建应用
+	  oc new-app https://github.com/youruser/yourgitrepo --source-secret=yoursecret
+	  
 
 
 ## status ##

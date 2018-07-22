@@ -45,6 +45,13 @@ v3.9.0下载地址：https://github.com/openshift/origin/releases/tag/v3.9.0，�
 `oc login https://os-console.xiaohehe.com:8443/ --insecure-skip-tls-verify -u admin -p passowrd`
 ### 登出 ###
 直接输入 `oc logout` 就能退出登录
+# 常用管理命令 #
+## 节点管理 ##
+### 列出节点 ###
+#### 获取集群所有节点信息 ####
+
+
+
 # 基本命令 #
 ## types ##
 **用途**
@@ -823,6 +830,7 @@ Apply a configuration to a resource by filename or stdin
        
       # 更新node k8s-node-1 的spec下unschedulable,设置node k8s-node-1为不可调度
       oc patch node k8s-node-1 -p '{"spec":{"unschedulable":true}}'
+
 ## process ##
 **用途**
 
@@ -850,46 +858,87 @@ Apply a configuration to a resource by filename or stdin
     
 ## export ##
 **用途**
+
+把资源导出复用。创建时才生成的字段以及相关的状态信息会被清空。
+
 **使用方法**
-**使用示例**        
-Export resources so they can be used elsewhere
+> oc export RESOURCE/NAME ... [options]
+
+
+**使用示例**     
+       
+      # 导出标签name=test的service，dc
+      oc export svc,dc -l name=test
+      
+      # 导出所有服务为模板test
+      oc export service --as-template=test
+      
+      # 导出服务为json文件
+      oc export service -o json
+    
 ## extract ##
 **用途**
+
+导出secretes和config maps
+
 **使用方法**
+
+> oc extract RESOURCE/NAME [--to=DIRECTORY] [--keys=KEY ...] [options]
+
 **使用示例**        
-Extract secrets or config maps to disk
+      # 提取 secret "test" 到当前目录
+      oc extract secret/test
+      
+      # 提取configmap/nginx到/tmp
+      oc extract configmap/nginx --to=/tmp
+      
+      # 提取configmap/nginx到当前命令行
+      oc extract configmap/nginx --to=-
+      
+      # 提取configmap/nginx中的nginx.con到/tmp
+      oc extract configmap/nginx --to=/tmp --keys=nginx.conf
+
 ## idle ##
 **用途**
+把可伸缩的资源置位空闲：idle把可伸缩的相关资源置位空闲，并把副本数置为0。一旦接受到网络请求，相关的service或者route就会幻想对应的资源，并回复到之前的副本数
+
 **使用方法**
+> oc idle (SERVICE_ENDPOINTS... | -l label | --all | --resource-names-file
+> FILENAME) [options]
+
 **使用示例**       
-Idle scalable resources
-## observe ##
-**用途**
-**使用方法**
-**使用示例**      
-Observe changes to resources and react to them (experimental)
+    
+      # 把to-idle.txt中的服务相关的资源设置为idle 
+      $ oc idle --resource-names-file to-idle.txt
+
 ## policy ##
 **用途**
+
+管理授权政策
+
 **使用方法**
-**使用示例**     
-Manage authorization policy
-## auth ##
-**用途**
-**使用方法**
-**使用示例**         
-Inspect authorization
-## convert ##
-**用途**
-**使用方法**
-**使用示例**       
-Convert config files between different API versions
-## import ##
-**用途**
-**使用方法**
-**使用示例**        
-Commands that import applications
-## image ##
-**用途**
-**使用方法**
-**使用示例**        
-Useful commands for managing images
+
+> oc policy [options]
+> 
+> options：
+> 
+>   add-role-to-group      添加一个角色到当前项目的组
+>   
+>   add-role-to-user       添加一个角色到当前项目的用户或者service account
+>   
+>   can-i                  检查一个操作是否被允许
+>   
+>   remove-group           从当前项目组删除组
+>   
+>   remove-role-from-group 从组里删除角色
+>   
+>   remove-role-from-user  从用户删除角色
+>   
+>   remove-user            删除用户
+>   
+>   scc-review             查看哪个service account能创建pod
+>   
+>   scc-subject-review     检查一个用户或service account是否能创建pod
+>   
+>   who-can               检查哪个service account能对某个资进行操作
+

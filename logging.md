@@ -1,12 +1,8 @@
-
-
-
-
 # Logging
 
 ### 架构图
 
-![](pic/logging/efk_arc.png)
+![](.gitbook/assets/efk_arc.png)
 
 ## 日志采集
 
@@ -18,20 +14,15 @@ EFK方案：
 2. Fluentd
 3. Kibana
 
-**Fluentd:** 
-读取宿主机上的/var/log/message和/var/lib/docker目录下的系统及日志信息，并格式化为json信息 。fluentd采用daemon set方式部署，通过在每一个node部署一个fluentd实例来采集日志并根据配置文件将采集日志内容过滤后输出到目标地址（elasticsearch）
+**Fluentd:** 读取宿主机上的/var/log/message和/var/lib/docker目录下的系统及日志信息，并格式化为json信息 。fluentd采用daemon set方式部署，通过在每一个node部署一个fluentd实例来采集日志并根据配置文件将采集日志内容过滤后输出到目标地址（elasticsearch）
 
-**Elasticsearch:** 
-开源分布式搜索和分析引擎，负责收到日志信息后，存储信息并建立索引。
+**Elasticsearch:** 开源分布式搜索和分析引擎，负责收到日志信息后，存储信息并建立索引。
 
-**Kibana：** 
-提供图形界面供用户检索和分析
+**Kibana：** 提供图形界面供用户检索和分析
 
-**Curator：** 
-数据清理器，清理Elasticsearch中过期的数据。
+**Curator：** 数据清理器，清理Elasticsearch中过期的数据。
 
-**AuthProxy：** 
-身份验证，实现web console单点登录
+**AuthProxy：** 身份验证，实现web console单点登录
 
 ## 容器平台相关调用
 
@@ -41,7 +32,7 @@ EFK方案：
 
 EFK日志系统均通过容器方式部署，且部署在openshift-logging命名空间下。运维及相关调试均在openshift平台进行。日志平台部署完成后如下图，可以看到成功部署后应该有es（elasticsearch）/fluentd/kibana/curator服务。同时es/kibana服务中集成了authproxy服务（openshift平台认证服务）。EFK均由容器方式部署且配置文件通过configmap方式已挂载到各个服务实例配置目录下，通过查看logging命名空间下的configmap对象查看各个服务配置文件，部分配置文件体现在服务deployments yaml中的env中，通过修改变量值即修改配置。修改deployment后选择deploy可部署新配置的服务实例。若修改configmap中各个服务配置，删除相应服务实例pod即可重启服务读取最新配置。
 
-![](pic/logging/deploy.png)
+![](.gitbook/assets/deploy.png)
 
 ### fluentd
 
@@ -53,27 +44,24 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    2016-02-19 20:40:44 +0000 [info]: reading config file path="/etc/fluent/fluent.conf"
    ```
 
-2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过openshift平台进入elasticsearch（logging-es-data-\<suffix>）容器实例或使用本地终端客户端（xshell/iterm）登录openshift平台后使用"oc rsh"命令
+2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过openshift平台进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）登录openshift平台后使用"oc rsh"命令
 
    ```bash
-   
    curl --key /etc/elasticsearch/secret/admin-key \
    --cert /etc/elasticsearch/secret/admin-cert \
    --cacert /etc/elasticsearch/secret/admin-ca -XGET \
    "https://localhost:9200/_cat/indices?v"
    ```
 
-调整fluentd运行参数及其他配置需修改fluentd配置文件。登录openshift webconsole进入logging命名空间下选择resources-->other resources-->daemon set可以看到fluentd对象实例。通过actions中的edit yaml来编辑fluentd的daemon set对象。
+调整fluentd运行参数及其他配置需修改fluentd配置文件。登录openshift webconsole进入logging命名空间下选择resources--&gt;other resources--&gt;daemon set可以看到fluentd对象实例。通过actions中的edit yaml来编辑fluentd的daemon set对象。
 
 ## elasticsearch
 
-elasticsearch服务日志服务的存储和检索。分为两类，一是容器日志es实例（集群），而是系统日志es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\<suffix>为容器日志es，logging-es-ops-data-\<suffix>为系统日志es。集群模式时，实例个数等于集群配置个数。
+elasticsearch服务日志服务的存储和检索。分为两类，一是容器日志es实例（集群），而是系统日志es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\为容器日志es，logging-es-ops-data-\为系统日志es。集群模式时，实例个数等于集群配置个数。
 
 1. 监控检查：
-
-   - 容器启动后，检查实例日志，无报错即可
-
-   - 进入容器终端，执行如下命令查看es监控状态
+   * 容器启动后，检查实例日志，无报错即可
+   * 进入容器终端，执行如下命令查看es监控状态
 
      ```bash
      curl --key /etc/elasticsearch/secret/admin-key \
@@ -84,11 +72,9 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
 
      返回如下图即可
 
-     ![](pic/logging/es_healthcheck.png)
-
+     ![](.gitbook/assets/es_healthcheck.png)
 2. 运维操作及排查错误
-
-   - 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时通过api删除相应日志。heap size调整方式通过设定ENV INSTANCE_RAM的值进行调整。使用如下命令删除部分日志
+   * 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时通过api删除相应日志。heap size调整方式通过设定ENV INSTANCE\_RAM的值进行调整。使用如下命令删除部分日志
 
      ```bash
      curl --key /etc/elasticsearch/secret/admin-key \
@@ -97,29 +83,25 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
      "https://localhost:9200/project.{PROJECT_NAME}.{PROJECT_ID}.{DATE}"
      ```
 
-     {PROJECT_NAME}:命名空间名称，可用"*"代替，代表所有namespace
+     {PROJECT\_NAME}:命名空间名称，可用"\*"代替，代表所有namespace
 
-     {PROJECT_ID}:命名空间ID，如不清楚如何查询namespaceID，可通过"*"代替
+     {PROJECT\_ID}:命名空间ID，如不清楚如何查询namespaceID，可通过"\*"代替
 
      {DATE}:日志，格式形如"2018.04.01"
 
      通过选定项目名称、项目ID、日期进行有筛选的删除相应索引达到降低es实例负载
 
-   - 组件curator部署后会定期删除旧时日志。因为集群发生问题可能性较小。
-
-   - 重启es实例可以通过openshift webconsole或cli删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
-
-   - es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在webconsole或cli执行部署操作。
+   * 组件curator部署后会定期删除旧时日志。因为集群发生问题可能性较小。
+   * 重启es实例可以通过openshift webconsole或cli删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
+   * es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在webconsole或cli执行部署操作。
 
 ## kibana
 
-kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问https://kibana_url 来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
+kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问https://kibana_url来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
 
 1. 服务监控检查
-
-   - 服务部署完成后，通过访问https://kibana_url 地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。  ![](pic/logging/kibana_check.png)
-
-   - kibana pod中包含两个容器，一个是kibana-proxy，作为用户权限认证。另一个为kibana自身服务。kibana-proxy若打印如下日志将表明服务启动正常。
+   * 服务部署完成后，通过访问https://kibana_url地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。![](.gitbook/assets/kibana_check.png)
+   * kibana pod中包含两个容器，一个是kibana-proxy，作为用户权限认证。另一个为kibana自身服务。kibana-proxy若打印如下日志将表明服务启动正常。
 
      ```bash
      Starting up the proxy with auth mode "oauth2" and proxy transform "user_header,token_header".
@@ -131,16 +113,12 @@ kibana作为日志的展示模块，常常用于运维人员或拥有使用kiban
      {"type":"log","@timestamp":"2016-09-07T20:07:31+00:00","tags":["listening","info"],"pid":8,"message":"Server running at http://0.0.0.0:5601"}
      {"type":"log","@timestamp":"2016-09-07T20:07:31+00:00","tags":["status","plugin:elasticsearch","info"],"pid":8,"name":"plugin:elasticsearch","state":"green","message":"Status changed from yellow to green - Kibana index ready","prevState":"yellow","prevMsg":"Waiting for Elasticsearch"}
      ```
-
-     
-
 2. 使用
 
-   同kibana使用方式，索引名为"project.{project_name}.{project_id}.{date}"。
+   同kibana使用方式，索引名为"project.{project\_name}.{project\_id}.{date}"。
 
 3. 运维及排查错误
-
-   - kibana访问显示503错误
+   * kibana访问显示503错误
 
      首先确保kibana pod中kibana-proxy以及kibana服务本身运行正常。通过如下命令查看service中是否存在kibana的endpoints
 
@@ -164,7 +142,7 @@ kibana作为日志的展示模块，常常用于运维人员或拥有使用kiban
 
      若依然无法访问，请查看route具体后端service是否为正确。且service代理后端为正在运行的kibana pod服务
 
-   - kibana登录认证失败
+   * kibana登录认证失败
 
      若登录kibana服务时，登录地址会重定向到相对应openshift平台，登录成功后会重定向会kibana访问地址。若输入正确用户名密码后依然提示需要登录，问题可能发生在secret不匹配，遗憾并没有办法或者某种方式可以得到这样的信息。操作如下命令后重新部署logging-EFK日志系统
 
@@ -172,6 +150,3 @@ kibana作为日志的展示模块，常常用于运维人员或拥有使用kiban
      $ oc delete oauthclient/kibana-proxy
      ```
 
-     
-
- 

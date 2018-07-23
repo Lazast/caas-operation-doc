@@ -37,6 +37,10 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 当前caas中harbor提供主备模式的高可用部署，在存储机A、B分别中部署一套harbor，使用rsync在从节点同步主节点数据，上面通过keepalived提供的vip保证服务的高可用。
 
+#### harbor与其他组件关系
+
+harbor目前harbor依赖于ldap服务用于用户登录，同时harbor还依赖caas webportal将push镜像元数据传回到caas，以及将镜像漏洞扫描结果传回到caas。
+
 #### harbor日志
 
 虽然harbor各个组件都是使用docker容器部署，但是harbor所有组件的日志通过syslog存放到宿主机目录/var/log/harbor/下。

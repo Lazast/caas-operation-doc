@@ -113,11 +113,11 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
 
 ## kibana
 
-kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问https://kibana_url来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
+kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问https://kibana_url 来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
 
 1. 服务监控检查
 
-   - 服务部署完成后，通过访问https://kibana_url地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。  ![](pic/logging/kibana_check.png)
+   - 服务部署完成后，通过访问https://kibana_url 地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。  ![](pic/logging/kibana_check.png)
 
    - kibana pod中包含两个容器，一个是kibana-proxy，作为用户权限认证。另一个为kibana自身服务。kibana-proxy若打印如下日志将表明服务启动正常。
 

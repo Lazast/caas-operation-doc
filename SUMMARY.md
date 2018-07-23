@@ -7,7 +7,6 @@
 * [OpenShiftCLI](openshiftcli.md)
 * [ldap](ldap.md)
 * [Harbor](harbor.md)
-* [Prometheus](prometheus.md)
 * [Logging](logging.md)
 * [NFS](nfs.md)
 * [NetworkRelated](networkrelated.md)

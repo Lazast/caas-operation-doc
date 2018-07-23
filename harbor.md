@@ -8,8 +8,14 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 ![harbor&#x67B6;&#x6784;](.gitbook/assets/20170912121921883.txt)
 
-主要组件包括proxy，他是一个nginx前端代理，主要是分发前端页面ui访问和镜像上传和下载流量，上图中通过深蓝色先标识；ui提供了一个web管理页面，当然还包括了一个前端页面和后端API，底层使用mysql数据库；registry是镜像仓库，负责存储镜像文件，当镜像上传完毕后通过hook通知ui创建repository，上图通过红色线标识，当然registry的token认证也是通过ui组件完成；adminserver是系统的配置管理中心附带检查存储用量，ui和jobserver启动时候回需要加载adminserver的配置，通过灰色线标识；jobsevice是负责镜像复制工作的，他和registry通信，从一个registry pull镜像然后push到另一个registry，并记录job\_log，上图通过紫色线标识；log是日志汇总组件，通过docker的log-driver把日志汇总到一起，通过浅蓝色线条标识。  
+主要组件包括：
 
+1. proxy，他是一个nginx前端代理，主要是分发前端页面ui访问和镜像上传和下载流量，上图中通过深蓝色先标识；
+2. ui提供了一个web管理页面，当然还包括了一个前端页面和后端API，底层使用mysql数据库；
+3. registry是镜像仓库，负责存储镜像文件，当镜像上传完毕后通过hook通知ui创建repository，上图通过红色线标识，当然registry的token认证也是通过ui组件完成；
+4. adminserver是系统的配置管理中心附带检查存储用量，ui和jobserver启动时候会需要加载adminserver的配置，上图中通过灰色线标识；
+5. jobsevice是负责镜像复制工作的，他和registry通信，从一个registry pull镜像然后push到另一个registry，并记录job\_log，上图中通过紫色线标识；
+6. log是日志汇总组件，通过docker的log-driver把日志汇总到一起，上图中通过浅蓝色线条标识。 
 
 ## Harbor使用
 

@@ -48,7 +48,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    2016-02-19 20:40:44 +0000 [info]: reading config file path="/etc/fluent/fluent.conf"
    ```
 
-2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift平台进入elasticsearch（logging-es-data-\<suffix>）容器实例或使用本地终端客户端（xshell/iterm）登录OpenShift平台后使用"oc rsh"命令
+2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift平台进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）登录OpenShift平台后使用"oc rsh"命令
 
    ```bash
    curl --key /etc/elasticsearch/secret/admin-key \
@@ -61,7 +61,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
 
 ## elasticsearch
 
-elasticsearch服务日志服务的存储和检索。分为两类，一是容器日志es实例（集群），而是系统日志es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\<suffix>为容器日志es，logging-es-ops-data-\<suffix>为系统日志es。集群模式时，实例个数等于集群配置个数。
+elasticsearch服务日志服务的存储和检索。分为两类，一是容器日志es实例（集群），而是系统日志es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\为容器日志es，logging-es-ops-data-\为系统日志es。集群模式时，实例个数等于集群配置个数。
 
 1. 监控检查：
    * 容器启动后，检查实例日志，无报错即可
@@ -104,8 +104,7 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
 kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问`https://kibana_url`来进行访问。同时该模块集成了OpenShift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于OpenShift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
 
 1. 服务监控检查
-   * 服务部署完成后，通过访问`https://kibana_url`地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。![](pic/logging/kibana_check.png)
-
+   * 服务部署完成后，通过访问`https://kibana_url`地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。![](.gitbook/assets/kibana_check%20%281%29.png)
    * kibana pod中包含两个容器，一个是kibana-proxy，作为用户权限认证。另一个为kibana自身服务。kibana-proxy若打印如下日志将表明服务启动正常。
 
      ```bash
@@ -154,3 +153,4 @@ kibana作为日志的展示模块，常常用于运维人员或拥有使用kiban
      ```bash
      $ oc delete oauthclient/kibana-proxy
      ```
+

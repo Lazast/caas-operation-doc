@@ -45,28 +45,28 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 当前CaaS中harbor提供主备模式的高可用部署，在存储机A、B分别中部署一套harbor，使用rsync在从节点同步主节点数据，上面通过keepalived提供的vip保证服务的高可用。
 
-#### harbor与其他组件关系
+### harbor与其他组件关系
 
 harbor目前依赖:
 
 1. ldap服务用于用户登录（认证与鉴权）;
 2. 依赖CaaS webportal将push到harbor的镜像的元数据传回到CaaS，以及将镜像漏洞扫描结果传回到CaaS。
 
-#### harbor日志
+### harbor日志
 
 虽然harbor各个组件都是使用docker容器部署，但是harbor所有组件的日志通过syslog存放到宿主机目录/var/log/harbor/下。
 
-#### harbor数据
+### harbor数据
 
 harbor的数据默认存放到/caas\_data/harbor\_data/目录下，其中包括mysql数据，docker镜像数据以及postgresql数据\(镜像扫描需要的数据库\)。
 
 rsync会定时（默认1小时，如果对harbor操作频繁可以手动修改从节点的/etc/crontab的同步周期）同步/caas\_data/harbor\_data/目录。
 
-#### 主从切换
+### 主从切换
 
 如果主节点down掉，harbor vip会自动漂移到从节点，同时keepalived通知脚本也会自动重启harbor组件的mysql和postgresql\(此配置在从节点/etc/keepalived/keepalived.conf中\)。因此可以无感知地启用从节点的harbor提供服务。
 
-如果主节点修复成功，想继续使用主节点提供服务的话，需要人工干预，首先确保vip不在主节点上，查看主节点上/etc/crontab中注释掉的rsync命令，使用此命令从从节点同步最新harbor数据，使用如下命令重启主节点harbor服务，之后启动keepalived确保vip在主节点。
+如果主节点修复成功，想继续使用主节点提供服务的话，需要人工干预。首先确保vip不在主节点上，查看主节点上/etc/crontab中注释掉的rsync命令，使用此命令从从节点同步最新harbor数据，使用如下命令重启主节点harbor服务，之后启动keepalived确保vip在主节点。
 
 ```bash
 docker-compose -f /opt/harbor/docker-compose.yml \

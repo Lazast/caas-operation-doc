@@ -58,19 +58,21 @@ harbor目前依赖:
 
 #### harbor数据
 
-harbor的数据默认存放到/caas\_data/harbor\_data/目录下，其中包括mysql数据，docker镜像数据以及postgresql数据\(镜像扫描需要的数据库\)。因此rsync会定时（默认1小时，如果对harbor操作频繁可以手动修改从节点的/etc/crontab的同步周期）同步/caas\_data/harbor\_data/目录。
+harbor的数据默认存放到/caas\_data/harbor\_data/目录下，其中包括mysql数据，docker镜像数据以及postgresql数据\(镜像扫描需要的数据库\)。
+
+rsync会定时（默认1小时，如果对harbor操作频繁可以手动修改从节点的/etc/crontab的同步周期）同步/caas\_data/harbor\_data/目录。
 
 #### 主从切换
 
-如果主节点down掉，harbor vip会自动漂移到从节点，同时keepalived通知脚本也会自动重启harbor组件的mysql和postgresql\(此配置在从节点/etc/keepalived/keepalived.conf中\)。因此可以无感知启用从节点的harbor提供服务。
+如果主节点down掉，harbor vip会自动漂移到从节点，同时keepalived通知脚本也会自动重启harbor组件的mysql和postgresql\(此配置在从节点/etc/keepalived/keepalived.conf中\)。因此可以无感知地启用从节点的harbor提供服务。
 
 如果主节点修复成功，想继续使用主节点提供服务的话，需要人工干预，首先确保vip不在主节点上，查看主节点上/etc/crontab中注释掉的rsync命令，使用此命令从从节点同步最新harbor数据，使用如下命令重启主节点harbor服务，之后启动keepalived确保vip在主节点。
 
 ```bash
-docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml \
-    down
-docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml \
-    up -d
+docker-compose -f /opt/harbor/docker-compose.yml \
+    -f /opt/harbor/docker-compose.clair.yml down
+docker-compose -f /opt/harbor/docker-compose.yml \
+    -f /opt/harbor/docker-compose.clair.yml up -d
 ```
 
 

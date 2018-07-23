@@ -100,7 +100,7 @@ Convert2nfs是由Python编写创建持久化卷并暴露使用的程序。创建
 
 当主机down掉切换到备机时，因为上述高可用架构，可以做到无感知切换。
 
-但是当主机修复，恢复之前主从结构时，需要在down掉的主节点上，首先确保keepalived服务停止，确保VIP不在主节点上；其次，查看主节点上/etc/crontab中的注释掉的rsync命令，手动运行以从从节点同步最新/nfs数据；同步完成后，启动keepalived确保VIP漂回主节点。
+但是当主机修复，恢复之前主从结构时，需要在down掉的主节点上，首先确保keepalived服务停止，确保VIP不在主节点上；其次，在备机上启动rsyncd服务\(systemctl start rsyncd\)，之后查看主节点上/etc/crontab中的注释掉的rsync命令，手动运行以从从节点同步最新/nfs数据；同步完成后，启动keepalived确保VIP漂回主节点。
 
 **注意：** 和harbor同理，为了保证服务的稳定和可控，服务于nfs的keepalived服务同样在配置文件中定了主备关系，而不是非抢占式的双备启动，因此当down掉的主节点在恢复后，需要确保VIP能回漂到主节点。  
 

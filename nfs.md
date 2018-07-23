@@ -92,8 +92,8 @@ Convert2nfs是由Python编写创建持久化卷并暴露使用的程序。创建
 ![](.gitbook/assets/nfs.jpg)
 
 * 使用lvm管理每个用户创建的数据卷容量，在两台存储机会镜像创建相同的数据卷，所以请保证用于nfs的磁盘容量相同。
-* 用户数据保存在/nfs/{namespace}{name}目录中，每个目录是一个lvm逻辑卷，容量又用户创建。
-* 使用keepalived vip来保证nfs高可用，使用rsync从备机定时同步主机/nfs/目录下的数据
+* 用户数据保存在/nfs/{namespace}{name}目录中，每个目录是一个lvm逻辑卷，容量由用户创建。
+* 使用keepalived vip来保证nfs高可用，使用rsync从备机定时同步主机/nfs/目录下的数据以保证数据备份。
 * 为了保证nfs-server完全无状态话，即切换过程中nfs客户端写入数据无卡顿，使用nfs v3以及udp协议作为挂载参数。
 
 #### 主备切换

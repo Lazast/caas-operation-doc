@@ -294,7 +294,7 @@ oc new-project web-team-dev --display-name="Web Team Development" --description=
 
 **用途**
 
-切换到其他project，并把该project设置成当前默认的project
+切换到其他project，并把该project设置成当前默认的project。当不带任何参数时，则显示当前所在项目。
 
 **使用方法**
 
@@ -338,8 +338,10 @@ oc projects
   # 获取资源的文档：以yaml格式显示该资源的属性以及值
   oc explain pods
 
-  # 显示某资源的具体的属性的相关信息
+  # 可以资源的属性以及子属性通过点(.)串联起来，以显示指定资源的具体的属性或子属性的相关信息
   oc explain pods.spec.containers
+  oc explain pods.spec.containers.env
+  oc explain pods.spec.containers.env.valueFrom
 ```
 
 ## 构建、部署命令
@@ -405,24 +407,21 @@ oc projects
   # 使用当前路径的git库和repo/langimage进行构建
   oc new-build . --docker-image=repo/langimage
 
-  # 使用提供的镜像和源代码地址进行构建
-  oc new-build
-openshift/nodejs-010-centos7~https://github.com/openshift/nodejs-ex.git
-
-  # 使用远程源代码的beta2分支进行构建
-  oc new-build https://github.com/openshift/ruby-hello-world#beta2
-
-  # 通过-D传入Dockerfile内容进行构建
-  oc new-build -D $'FROM centos:7\nRUN yum install -y httpd'
+  # 使用提供的镜像（openshift/nodejs-010-centos7)和源代码
+  # 地址(https://github.com/openshift/nodejs-ex.git)进行构建
+  oc new-build \
+      openshift/nodejs-010-centos7~https://github.com/openshift/nodejs-ex.git
 
   # 使用远程代码库和自定义环境变量进行构建
-  oc new-build https://github.com/openshift/ruby-hello-world -e
-RACK_ENV=development
+  oc new-build https://github.com/openshift/ruby-hello-world \
+      -e RACK_ENV=development
 
   # 使用远程私有代码库和指定的secret进行构建
-  oc new-build https://github.com/youruser/yourgitrepo
---source-secret=yoursecret
+  oc new-build https://github.com/youruser/yourgitrepo \
+        --source-secret=yoursecret
 ```
+
+可以通过命令 oc new-build -h 获取更多示例和说明。
 
 ### start-build
 
@@ -438,9 +437,11 @@ RACK_ENV=development
 
 ```text
   # 从bc "hello-world"启动构建
+  # 可以通过 "oc get bc" 来查看当前项目下有哪些bc(即buildConfig)
   oc start-build hello-world
 
   # 从上一次的构建 "hello-world-1"启动构建
+  # 可以通过命令 "oc get builds" 来查看当前项目下有哪些build
   oc start-build --from-build=hello-world-1
 
   # 从bc “hello-world"开启一次构建，并输出日志一直到完成或失败

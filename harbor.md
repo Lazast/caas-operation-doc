@@ -25,27 +25,32 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 ### 1.用户管理
 
-基于角色的访问控制，RBAC，用户分为三种角色：项目管理员（MDRWS）、开发人员（RWS）和访客（RS），当然还有一个最高管理员权限admin系统管理员。   
-上面的简称大概说一下，M:管理、D:删除、R:读取、W:写入、S:查询，非常细致的权限管理体系。当然一个用户可以在不同的项目里面扮演不同角色，这个和现实的用户管理体系非常吻合。
+基于角色的访问控制，即RBAC，将用户分为三种角色：项目管理员（MDRWS）、开发人员（RWS）和访客（RS）。此外，还有一个最高管理员权限，即admin系统管理员。   
+上面括号中的内容即为角色所具有的权限，包括 M:管理、D:删除、R:读取、W:写入、S:查询，非常细致的权限管理体系。当然一个用户可以在不同的项目里面扮演不同角色，这个和现实的用户管理体系非常吻合。
 
 ### 2.项目管理
 
-项目管理是系统最主要的一个功能模块，项目是一组镜像仓库的逻辑集合，是权限管理和资源管理的单元划分。一个项目下面有多个镜像仓库，并且关联多个不同角色的成员，镜像复制也是基于项目的，通过添加复制规则，可以将项目下面的镜像从一个harbor迁移到另一个harbor，并且可以通过日志查看复制过程，并有retry机制。
+项目管理是系统最主要的一个功能模块。项目是一组镜像仓库的逻辑集合，是权限管理和资源管理的单元划分。一个项目下面有多个镜像仓库，并且关联多个不同角色的成员。镜像复制也是基于项目的，通过添加复制规则，可以将项目下面的镜像从一个harbor迁移到另一个harbor，并且可以通过日志查看复制过程，并有retry机制。
 
 ### 3.配置管理和日志查询
 
-配置管理主要是配置harbor的认证模式，企业内部使用，通常都是对接到公司LDAP上面，当然harbor也支持数据库认证；还可以设置token的有效时间。用户对镜像的pull和push操作都可以被harbor记录下来，这样为排查文件提供了重要手段。   
+配置管理主要是配置harbor的认证模式，用于企业内部使用，通常都是对接到公司LDAP上面，当然harbor也支持数据库认证；还可以设置token的有效时间。
+
+用户对镜像的pull和push操作都可以被harbor记录下来，这样为排查文件提供了重要手段，在登录harbor的web UI后，可以在logs页面栏里查看相关的记录。   
 
 
 ## CaaS中Harbor部署方案
 
 ![](.gitbook/assets/harbor-bu-shu-jia-gou.jpg)
 
-当前caas中harbor提供主备模式的高可用部署，在存储机A、B分别中部署一套harbor，使用rsync在从节点同步主节点数据，上面通过keepalived提供的vip保证服务的高可用。
+当前CaaS中harbor提供主备模式的高可用部署，在存储机A、B分别中部署一套harbor，使用rsync在从节点同步主节点数据，上面通过keepalived提供的vip保证服务的高可用。
 
 #### harbor与其他组件关系
 
-harbor目前harbor依赖于ldap服务用于用户登录，同时harbor还依赖caas webportal将push镜像元数据传回到caas，以及将镜像漏洞扫描结果传回到caas。
+harbor目前依赖:
+
+1. ldap服务用于用户登录（认证与鉴权）;
+2. 依赖CaaS webportal将push到harbor的镜像的元数据传回到CaaS，以及将镜像漏洞扫描结果传回到CaaS。
 
 #### harbor日志
 
@@ -62,8 +67,10 @@ harbor的数据默认存放到/caas\_data/harbor\_data/目录下，其中包括m
 如果主节点修复成功，想继续使用主节点提供服务的话，需要人工干预，首先确保vip不在主节点上，查看主节点上/etc/crontab中注释掉的rsync命令，使用此命令从从节点同步最新harbor数据，使用如下命令重启主节点harbor服务，之后启动keepalived确保vip在主节点。
 
 ```bash
-docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml down
-docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml up -d
+docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml \
+    down
+docker-compose -f /opt/harbor/docker-compose.yml -f /opt/harbor/docker-compose.clair.yml \
+    up -d
 ```
 
 

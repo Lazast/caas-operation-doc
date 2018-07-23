@@ -1,17 +1,17 @@
-# Persistent Volume
+# NFS
 
 随着Docker及Kubernetes技术发展的越来越成熟稳定，容器平台不仅仅局限于部署无状态应用，越来越多的有状态服务也可以在容器云上稳定地部署运行。openshift平台提供了静态持久化卷存储对象（persistent volume）以及持久化卷请求对象（persistent volume claim）
 
 ### 架构图
 
-![](pic/nfs/arc.png)
+![](.gitbook/assets/arc.png)
 
 容器平台底层均通过nfs方式将持久化卷暴露并使用挂载到pod中。底层物理存储设备通过lvm管理或搭建ceph集群方式作为nfs服务的存储设备。最终上层调用主需要暴露nfs服务即可。这样做的优点如下：
 
-- 共享型持久化数据卷，可以同时挂在多个pod中
-- 支持多读多写
-- 上层调用统一，不用关心底层存储实现方式
-- 支持多种底层存储
+* 共享型持久化数据卷，可以同时挂在多个pod中
+* 支持多读多写
+* 上层调用统一，不用关心底层存储实现方式
+* 支持多种底层存储
 
 ## 容器平台相关调用
 
@@ -24,28 +24,26 @@ Convert2nfs是由Python编写创建持久化卷并暴露使用的程序。创建
    ```bash
    #登录到存储主机节点
    ssh {storage_host}
-   
+
    #进入程序virtualenv虚拟环境
    source /opt/{virtualenv}/bin/activate
-   
+
    #获取程序pid
    pid=`ps -ef | grep wsgi|grep -v grep|awk '{print $2}'`
-   
+
    #杀掉程序进程
    kill -9 $pid
-   
+
    #启动服务
    cd /opt/convert2nfs && uwsgi -d /var/log/convert2nfs.log --http-socket :8080 --venv /opt/{virtualenv} --pecan config.py
    ```
 
-   - 若采用高可用架构，需要登录到两台存储服务器分别执行以上命令。
-   - 启动中若出现“无法找到XXX模块”错误，切记进入到virtualenv环境后再执行命令
+   * 若采用高可用架构，需要登录到两台存储服务器分别执行以上命令。
+   * 启动中若出现“无法找到XXX模块”错误，切记进入到virtualenv环境后再执行命令
 
 2. 查看程序日志
-
-   - 程序运行日志路径为/var/log/convert2nfs.log
-   - 程序错误日志路径为/var/log/convert2nfs_error.log
-
+   * 程序运行日志路径为/var/log/convert2nfs.log
+   * 程序错误日志路径为/var/log/convert2nfs\_error.log
 3. 脚本授权
 
    查看/opt/convert2nfs/bin目录下脚本是否拥有执行权限，若没有执行如下命令
@@ -56,9 +54,9 @@ Convert2nfs是由Python编写创建持久化卷并暴露使用的程序。创建
 
 4. 服务健康检查
 
-   访问http://convert2nfs_url 得到如下返回值表示服务启动正常
+   访问[http://convert2nfs\_url](http://convert2nfs_url) 得到如下返回值表示服务启动正常
 
-   ```json
+   ```javascript
    {"health": "ok"}
    ```
 
@@ -67,27 +65,27 @@ Convert2nfs是由Python编写创建持久化卷并暴露使用的程序。创建
    ```bash
    #登录到存储服务器节点
    ssh {storage_host}
-   
+
    #查看卷是否创建成功
    df -h | grep {volume_name}
-   
+
    #若卷创建成功，查看是否nfs service将其暴露出去
    cat /etc/exports | grep {volume_name}
-   
+
    #nfs暴露卷配置无异常，尝试手动挂载。
    #登录openshift 计算节点
    ssh {node_host}
    mount -t nfs nfs_ip:/nfs/{volume_name} /mnt
-   
+
    #使用df命令查看是否成功将nfs卷挂载到本机目录
    df -h | grep {volume_name}
    ```
 
    挂载失败可能有如下几种原因：
 
-   - Convert2nfs 创建持久化卷失败，具体查看convert2nfs程序及错误日志
-   - 底层卷管理工具lvm创建lv失败，具体查看相关日志排查错误。若底层采用ceph rbd，请ceph运维人员查看ceph集群健康状况
-   - 存储服务器防火墙未设定相关端口。需将111/2048/2049/20048-20050的tcp/udp端口允许计算节点访问
+   * Convert2nfs 创建持久化卷失败，具体查看convert2nfs程序及错误日志
+   * 底层卷管理工具lvm创建lv失败，具体查看相关日志排查错误。若底层采用ceph rbd，请ceph运维人员查看ceph集群健康状况
+   * 存储服务器防火墙未设定相关端口。需将111/2048/2049/20048-20050的tcp/udp端口允许计算节点访问
 
 ### 高可用
 

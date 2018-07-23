@@ -6,7 +6,7 @@
 
 ## 日志采集
 
-openshift日志管理采用：
+OpenShift日志管理采用：
 
 EFK方案：
 
@@ -26,11 +26,15 @@ EFK方案：
 
 ## 容器平台相关调用
 
-容器平台的日志管理模块使用了openshift的EFK日志采集方案。选择容器日志标签，根据选择相应命名空间-应用-服务-具体实例可以查看具体某个容器的应用日志（控制台打印的标准输出内容）。同时日志也将保存到elasticsearch集群中作持久化存储，以防出现某种严重问题时用户可以通过调用elasticsearch API获取容器日志。日志管理模块可以选择相应日期和关键字作为日志筛选条件。通过定义日期以及关键字，用户可以更快更细致定位所需日志内容。同时，日志管理模块允许用户下载所筛选日志存储到本地，便于分析问题，保留日志内容。
+容器平台的日志管理模块使用了OpenShift的EFK日志采集方案。选择容器日志标签，根据格式 “命名空间-应用-服务-具体实例” 可以查看具体某个容器的应用日志（控制台打印的标准输出内容）。同时日志也将保存到elasticsearch集群中作持久化存储，以便于出现某种严重问题时，用户可以通过调用elasticsearch API获取容器日志。
+
+日志管理模块可以选择相应日期和关键字作为日志筛选条件。通过定义日期以及关键字，用户可以更快更细致定位所需日志内容。同时，日志管理模块允许用户下载所筛选日志存储到本地，便于分析问题，保留日志内容。
 
 ## 运维及调试
 
-EFK日志系统均通过容器方式部署，且部署在openshift-logging命名空间下。运维及相关调试均在openshift平台进行。日志平台部署完成后如下图，可以看到成功部署后应该有es（elasticsearch）/fluentd/kibana/curator服务。同时es/kibana服务中集成了authproxy服务（openshift平台认证服务）。EFK均由容器方式部署且配置文件通过configmap方式已挂载到各个服务实例配置目录下，通过查看logging命名空间下的configmap对象查看各个服务配置文件，部分配置文件体现在服务deployments yaml中的env中，通过修改变量值即修改配置。修改deployment后选择deploy可部署新配置的服务实例。若修改configmap中各个服务配置，删除相应服务实例pod即可重启服务读取最新配置。
+EFK日志系统均通过容器方式部署，且部署在openshift-logging命名空间下。运维及相关调试均在OpenShift平台进行。日志平台部署完成后如下图，可以看到成功部署后应该有es（elasticsearch）/fluentd/kibana/curator服务。同时es/kibana服务中集成了authproxy服务（OpenShift平台认证服务）。
+
+EFK的配置文件通过configmap方式挂载到各个服务实例配置目录下，通过查看logging命名空间下的configmap对象可以查看各个服务配置文件。部分配置文件体现在服务deployments yaml中的env中，通过修改变量值即修改配置。修改deployment后选择deploy可部署新配置的服务实例。若修改configmap中各个服务配置，则需要重新部署相应的服务来获取更新后的配置。
 
 ![](.gitbook/assets/deploy.png)
 
@@ -44,7 +48,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    2016-02-19 20:40:44 +0000 [info]: reading config file path="/etc/fluent/fluent.conf"
    ```
 
-2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过openshift平台进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）登录openshift平台后使用"oc rsh"命令
+2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift平台进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）登录OpenShift平台后使用"oc rsh"命令
 
    ```bash
    curl --key /etc/elasticsearch/secret/admin-key \
@@ -53,7 +57,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    "https://localhost:9200/_cat/indices?v"
    ```
 
-调整fluentd运行参数及其他配置需修改fluentd配置文件。登录openshift webconsole进入logging命名空间下选择resources--&gt;other resources--&gt;daemon set可以看到fluentd对象实例。通过actions中的edit yaml来编辑fluentd的daemon set对象。
+调整fluentd运行参数及其他配置需修改fluentd配置文件。登录OpenShift webconsole进入logging命名空间下选择resources--&gt;other resources--&gt;daemon set可以看到fluentd对象实例。通过actions中的edit yaml来编辑fluentd的daemon set对象。
 
 ## elasticsearch
 
@@ -92,12 +96,12 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
      通过选定项目名称、项目ID、日期进行有筛选的删除相应索引达到降低es实例负载
 
    * 组件curator部署后会定期删除旧时日志。因为集群发生问题可能性较小。
-   * 重启es实例可以通过openshift webconsole或cli删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
+   * 重启es实例可以通过OpenShift webconsole或cli删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
    * es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在webconsole或cli执行部署操作。
 
 ## kibana
 
-kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问[https://kibana\_url来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。](https://kibana_url来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。)
+kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问[https://kibana\_url来进行访问。同时该模块集成了OpenShift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于OpenShift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。](https://kibana_url来进行访问。同时该模块集成了openshift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于openshift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。)
 
 1. 服务监控检查
    * 服务部署完成后，通过访问[https://kibana\_url地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。!\[\]\(.gitbook/assets/kibana\_check.png](https://kibana_url地址来进行对kibana的访问，输入正确的用户名密码可以看到如下图内容。![]%28.gitbook/assets/kibana_check.png)\)
@@ -144,7 +148,7 @@ kibana作为日志的展示模块，常常用于运维人员或拥有使用kiban
 
    * kibana登录认证失败
 
-     若登录kibana服务时，登录地址会重定向到相对应openshift平台，登录成功后会重定向会kibana访问地址。若输入正确用户名密码后依然提示需要登录，问题可能发生在secret不匹配，遗憾并没有办法或者某种方式可以得到这样的信息。操作如下命令后重新部署logging-EFK日志系统
+     若登录kibana服务时，登录地址会重定向到相对应OpenShift平台，登录成功后会重定向会kibana访问地址。若输入正确用户名密码后依然提示需要登录，问题可能发生在secret不匹配，遗憾并没有办法或者某种方式可以得到这样的信息。操作如下命令后重新部署logging-EFK日志系统
 
      ```bash
      $ oc delete oauthclient/kibana-proxy

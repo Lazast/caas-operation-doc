@@ -336,8 +336,10 @@ oc projects
   # 获取资源的文档：以yaml格式显示该资源的属性以及值
   oc explain pods
 
-  # 显示某资源的具体的属性的相关信息
+  # 可以资源的属性以及子属性通过点(.)串联起来，以显示指定资源的具体的属性或子属性的相关信息
   oc explain pods.spec.containers
+  oc explain pods.spec.containers.env
+  oc explain pods.spec.containers.env.valueFrom
 ```
 
 ## 构建、部署命令

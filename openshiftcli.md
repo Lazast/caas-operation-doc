@@ -50,7 +50,7 @@ _备注:OpenShift集群中的node和master上可以直接使用_
 
 登录后，可以通过命令检查当前的登录状态，包括登录的用户名以及登录的project。
 
-**命令**: 
+**命令**:
 
 `oc whoami`
 
@@ -181,7 +181,7 @@ Events:         <none>
    * 安装docker
    * 配置yum源
    * 安装需要的系统依赖包： 
-   * ` yum -y install wget  git  net-tools  bind-utils  yum-utils  iptables-services bridge-utils bash-completion kexec-tools sos  psacct  PyYAML python-ipaddress`
+   * `yum -y install wget  git  net-tools  bind-utils  yum-utils  iptables-services bridge-utils bash-completion kexec-tools sos  psacct  PyYAML python-ipaddress`
 4. 在部署机上执行增加节点的ansible脚本
 
    `ansible-playbook -i <inventory文件绝对路径> <存放部署脚本的路径>/openshift-ansible/playbooks/openshift-node/scaleup.yml`
@@ -680,7 +680,7 @@ oc get pod logging-fluentd-cjlgv -o yaml
 
 
   # 删除pod foo的标签 bar
-  oc label pods foo bar-   
+  oc label pods foo bar-
 ```
 
 ### annotate
@@ -732,7 +732,7 @@ oc get pod logging-fluentd-cjlgv -o yaml
   oc expose dc ruby-hello-world --port=8080
 
   # 创建指定路径的route
-  oc expose service nginx --path=/nginx  
+  oc expose service nginx --path=/nginx
 ```
 
 ### delete
@@ -939,7 +939,7 @@ oc get pod logging-fluentd-cjlgv -o yaml
 
 **使用方法**
 
-> oc cp   \[options\]
+> oc cp \[options\]
 
 **使用示例**
 

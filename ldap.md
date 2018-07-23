@@ -7,8 +7,23 @@ LDAP
 
    caas生产环境中ldap是以容器的形式运行，所以安装ldap前必须具备docker环境，安装命令如下：
 
-   ```text
-    docker run --name ldap1 --add-host ldap2.general.com:{{ groups.storages[1] }}  --restart=always  --hostname ldap1.general.com --env LDAP_BASE_DN="dc=general,dc=com" --env LDAP_REPLICATION_HOSTS="#PYTHON2BASH:['ldap://ldap1.general.com:389','ldap://ldap2.general.com:3389']" --env LDAP_REPLICATION=true --env LDAP_TLS_VERIFY_CLIENT="never" --env LDAP_DOMAIN="general.com" --env LDAP_ADMIN_PASSWORD="generalcom" -v /caas_data/ldap_data/ldap_config:/etc/ldap/slapd.d -v /caas_data/ldap_data/ldap_data:/var/lib/ldap -v /etc/localtime:/etc/localtime:ro -p 3389:389 --detach osixia/openldap:1.2.1 --loglevel debug --copy-service
+   ```bash
+   docker run --name ldap1 --add-host ldap2.general.com:{{ groups.storages[1] }} \
+     --restart=always \
+     --hostname ldap1.general.com \
+     --env LDAP_BASE_DN="dc=general,dc=com" \
+     --env LDAP_REPLICATION_HOSTS="#PYTHON2BASH:['ldap://ldap1.general.com:389','ldap://ldap2.general.com:3389']" \
+     --env LDAP_REPLICATION=true \
+     --env LDAP_TLS_VERIFY_CLIENT="never" \
+     --env LDAP_DOMAIN="general.com" \
+     --env LDAP_ADMIN_PASSWORD="generalcom" \
+     -v /caas_data/ldap_data/ldap_config:/etc/ldap/slapd.d \
+     -v /caas_data/ldap_data/ldap_data:/var/lib/ldap \
+     -v /etc/localtime:/etc/localtime:ro \
+     -p 3389:389 \
+     --detach osixia/openldap:1.2.1 \
+     --loglevel debug \
+     --copy-service
    ```
 
    脚本解释：

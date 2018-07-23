@@ -292,7 +292,7 @@ oc new-project web-team-dev --display-name="Web Team Development" --description=
 
 **用途**
 
-切换到其他project，并把该project设置成当前默认的project
+切换到其他project，并把该project设置成当前默认的project。当不带任何参数时，则显示当前所在项目。
 
 **使用方法**
 

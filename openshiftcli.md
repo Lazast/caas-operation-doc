@@ -405,24 +405,21 @@ oc projects
   # 使用当前路径的git库和repo/langimage进行构建
   oc new-build . --docker-image=repo/langimage
 
-  # 使用提供的镜像和源代码地址进行构建
-  oc new-build
-openshift/nodejs-010-centos7~https://github.com/openshift/nodejs-ex.git
-
-  # 使用远程源代码的beta2分支进行构建
-  oc new-build https://github.com/openshift/ruby-hello-world#beta2
-
-  # 通过-D传入Dockerfile内容进行构建
-  oc new-build -D $'FROM centos:7\nRUN yum install -y httpd'
+  # 使用提供的镜像（openshift/nodejs-010-centos7)和源代码
+  # 地址(https://github.com/openshift/nodejs-ex.git)进行构建
+  oc new-build \
+      openshift/nodejs-010-centos7~https://github.com/openshift/nodejs-ex.git
 
   # 使用远程代码库和自定义环境变量进行构建
-  oc new-build https://github.com/openshift/ruby-hello-world -e
-RACK_ENV=development
+  oc new-build https://github.com/openshift/ruby-hello-world \
+      -e RACK_ENV=development
 
   # 使用远程私有代码库和指定的secret进行构建
-  oc new-build https://github.com/youruser/yourgitrepo
---source-secret=yoursecret
+  oc new-build https://github.com/youruser/yourgitrepo \
+        --source-secret=yoursecret
 ```
+
+可以通过命令 oc new-build -h 获取更多示例和说明。
 
 ### start-build
 
@@ -438,9 +435,11 @@ RACK_ENV=development
 
 ```text
   # 从bc "hello-world"启动构建
+  # 可以通过 "oc get bc" 来查看当前项目下有哪些bc(即buildConfig)
   oc start-build hello-world
 
   # 从上一次的构建 "hello-world-1"启动构建
+  # 可以通过命令 "oc get builds" 来查看当前项目下有哪些build
   oc start-build --from-build=hello-world-1
 
   # 从bc “hello-world"开启一次构建，并输出日志一直到完成或失败

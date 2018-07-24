@@ -48,7 +48,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    2016-02-19 20:40:44 +0000 [info]: reading config file path="/etc/fluent/fluent.conf"
    ```
 
-2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift web console进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）在登录OpenShift平台后使用命令"oc rsh logging-es-data-\*"进入容器实例，然后运行如下命令
+2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift web console进入elasticsearch（logging-es-data-\<suffix>）容器实例或使用本地终端客户端（xshell/iterm）在登录OpenShift平台后使用命令"oc rsh logging-es-data-\*"进入容器实例，然后运行如下命令
 
    ```bash
    curl --key /etc/elasticsearch/secret/admin-key \
@@ -61,7 +61,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
 
 ## elasticsearch
 
-elasticsearch服务提供了日志服务的存储和检索。分为两类，一是负责容器日志的es实例（集群），二是负责系统日志的es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\为容器日志es实例，logging-es-ops-data-\为系统日志es实例。集群模式时，实例个数等于集群配置个数。
+elasticsearch服务提供了日志服务的存储和检索。分为两类，一是负责容器日志的es实例（集群），二是负责系统日志的es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\<suffix>为容器日志es实例，logging-es-ops-data-\<suffix>为系统日志es实例。集群模式时，实例个数等于集群配置个数。
 
 1. 监控检查：
    * 容器启动后，检查实例日志，无报错即可

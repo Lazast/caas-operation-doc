@@ -35,11 +35,12 @@ Convert2nfs是由Python编写的，用于创建持久化卷，并暴露持久化
    kill -9 $pid
 
    #启动服务
-   cd /opt/convert2nfs && uwsgi -d /var/log/convert2nfs.log --http-socket :8080 --venv /opt/{virtualenv} --pecan config.py
+   cd /opt/convert2nfs && uwsgi -d /var/log/convert2nfs.log --http-socket :8080 \
+       --venv /opt/{virtualenv} --pecan config.py
    ```
 
    * 若采用高可用架构，需要登录到两台存储服务器分别执行以上命令。
-   * 启动中若出现“无法找到XXX模块”错误，切记进入到virtualenv环境后再执行命令
+   * 启动中若出现“无法找到XXX模块”错误，请检查是否进入到了virtualenv环境。
 
 2. 查看程序日志
    * 程序运行日志路径为/var/log/convert2nfs.log
@@ -85,7 +86,7 @@ Convert2nfs是由Python编写的，用于创建持久化卷，并暴露持久化
 
    * Convert2nfs 创建持久化卷失败，具体查看convert2nfs程序及错误日志
    * 底层卷管理工具lvm创建lv失败，具体查看相关日志排查错误。若底层采用ceph rbd，请ceph运维人员查看ceph集群健康状况
-   * 存储服务器防火墙未设定相关端口。需将111/2048/2049/20048-20050的tcp/udp端口允许计算节点访问
+   * 存储服务器iptables防火墙未开通相关端口。需将111/2048/2049/20048-20050的tcp/udp端口允许计算节点访问
 
 ### 高可用
 

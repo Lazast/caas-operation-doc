@@ -1,76 +1,60 @@
 # OpenShift Web Console
 
+## 摘要
+
+由于CaaS Portal已经封装了大量的OpenShift相关操作，因此通常来讲，管理员并不需要在OpenShift Web Console中进行操作。因此，本页内容将不会逐个讲解OpenShift Web Console的页面内容及操作，但会针对CaaS Portal进行一部分补充讲解。
+
+虽然任何用户都可以登录OpenShift Web Console，但是我们只建议管理员登录。因此以下所有的内容都默认是以管理员身份登录的。
+
 ## 登录
 
 OpenShift Web Console域名在CaaS平台部署时可以商定，因此如果不确定域名是什么，可以询问平台的部署实施工程师。
 
 在浏览器中，需要以 https://域名:8443的方式登录。
 
-## 创建项目
+## 选择项目
 
-点击屏幕右侧的【Create Project】就可以创建项目，创建时需要填入Name, display name（建议和name一致\) 以及 description。
+每次登录后都会进入到OpenShift Web Console的主页面，在这里，我们可以通过右上角的【View All】来进入到项目检索页面
 
 ![](.gitbook/assets/image%20%283%29.png)
 
-## 管理项目
-
-### 查看所有项目列表
-
-创建好的项目，可以在右侧的项目列表里显示。但默认只会显示最新创建或更新的五个项目，当需要查看所有项目列表时，点击上图中的【View All】。点击后会进入项目列表展示页面，如下图
+由于是管理员，因此点击【View All】后跳转到【My Project】页面后能看到所有的项目。在该页面中，在上方的输入框中可以输入项目名称进行搜索。
 
 ![](.gitbook/assets/image%20%284%29.png)
 
-在该页面中，在上方的输入框中可以输入项目名称进行搜索。
+在上面的项目列表页面中，点击任意的项目，即可进入到该项目的管理页面
 
-### 项目基本维护
+![](.gitbook/assets/image%20%289%29.png)
 
-在上图中，点击项目右侧的竖排三个点，可以对项目进行基本的维护操作，如编辑项目中的用户成员角色信息，编辑项目的描述，以及删除项目。
+我们可以看到左边中的应用，构建，资源，存储，监控等功能页面都是和CaaS Portal中的用户可操作资源及内容是相关的。
 
-注意：由于CaaS OMP已经提供了对项目的管理和维护，因此，除非有特殊原因，不建议管理员在这里进行操作。
+在预览上方的下拉菜单中，可以选择其他项目进行跳转，便于管理员在不同项目间切换。
 
-## 租户项目管理
+## 单个项目的管理
 
-在上面的项目列表中，点击某个项目，即可进入该项目的管理页面，如下图
+以下内容，除非必要，我们都将只讲解如何查看。
 
-![](.gitbook/assets/image%20%286%29.png)
+虽然OpenShift Web Console提供了Overview，即概览页面，但是通常我们不会检查这个页面的信息，而是有针对的检查其他gong栏及其子页面。
 
-左边栏分别为概览，应用，构建，资源，存储，监控和编排商店。
+### Applications/Deployments
 
-在预览上方的下拉菜单中，可以选择其他项目进行跳转，便于管理员在不通项目间切换。
-
-### Overview/概览
-
-在橄榄页面中，点击某个应用，可以展开查看更多细节，如图
+Deployments页面中主要包含应用的deployments信息，基本展示页如下
 
 ![](.gitbook/assets/image%20%287%29.png)
 
-在单个应用的细节展示中，我们可以看到当前应用部署的版本号（如图中的caas-agamaha已经部署到了第5版），可以通过点击右侧圆圈旁的上下箭头来灵活的增减容器的副本数，对于没有配置Route的应用还将会在路由显示的地方展示创建Route的链接。点击右上方的竖排三个点，可以看到有deploy, edit, view logs三个选项，分别用来（基于当前的配置）重新部署一个新的版本，编辑应用的部分配置，以及查看应用的日志。
+可以看到当前所有部署的应用的deployments列表。可以看到每个应用当前部署的最新版本，健康状态，创建时间，以及自动部署触发类型。
 
-### Applications/应用
-
-应用栏一共包括Deployments，Stateful Sets, Pods, Services, Routes等子栏。由于本平台不使用Stateful Sets功能，因此这里忽略。
-
-#### Deployments
-
-Deployments页面中主要包含应用的部署信息，基本展示页如下
-
-![](.gitbook/assets/image%20%285%29.png)
-
-可以查看到当前所有部署的应用的部署信息列表。可以看到每个应用当前部署的最新版本，健康状态，创建时间，以及自动部署触发类型。
-
-点击单个应用部署信息后，会跳转到对应的详情页面，如下图
+点击单个deployment后，会跳转到对应的详情页面，如下图
 
 ![](.gitbook/assets/image%20%282%29.png)
 
-该页面中可以查看到部署版本历史，部署的基本配置信息，应用部署所使用的环境变量，以及部署事件。
+该页面中，我们通常只需要关注【Environments】栏和【Deploy】按键。
 
-点击左上角的Deploy可以手动触发新一轮的部署。
+Environments中包含了deployments的相关环境变量配置和configMap，以及secrets。
 
-点击Actions下拉列表，可以看到Pause Rollouts/Resume Rollouts，Add Storage，Add AutoScaler，Edit Resource Limits，Edit Health Checks， Edit Yaml， Delete等操作。这些操作分别用于冻结/恢复部署，添加存储，添加自动扩缩容配置，编辑资源限制，编辑健康检查，编辑应用部署的YAML文件，以及删除。
+而对于某些集群服务相关的应用，在修改了相关配置后，我们可能需要通过【Deploy】来手动出发新一轮的部署。
 
-根据实际经验，可以酌情选择进行操作，毕竟CaaS平台已经在用户界面封装了这些功能，一般不需要管理员在这里进行操作。
-
-#### Pods
+### Applications/Pods
 
 Pod界面中可以查看当前项目下的所有Pod，能够观察到Pod是否在运行（或者故障），Pod的运行时间。
 
@@ -82,29 +66,33 @@ Pod界面中可以查看当前项目下的所有Pod，能够观察到Pod是否�
 
 我们通常只关心Details和Logs，还有Terminal。Details中可以看到Pod所在节点的节点，便于底层在运维，而Logs和Terminals分别可以查看到Pod的日志，以及通过远程终端的方式登录到Pod。
 
-#### Services
+### Applications/Services
 
-#### Routes
+在Service的详情页面
 
-### Builds/构建
+![](.gitbook/assets/image%20%285%29.png)
 
-#### D
+通常我们会关注【Details】栏下的【Type】属性和【Traffic】下的【Route/Node Port】，当Type是NodePort时，则说明这个Service是以TCP方式暴露的，相应的Router/Node Port就会显示出该服务在集群上暴露出来的端口。
 
-### Resources/资源
+### Applications/Routes
 
-#### D
+对于以HTTP/HTTPS方式暴露的服务，通常我们只会关心在Route详情页面点击【Actions】-&gt; 【Edit】后进入的编辑页面
 
-### Storage/存储
+![](.gitbook/assets/image%20%2813%29.png)
 
-#### D
+这个页面包含了域名，路径，Service端口等基本信息。而对于HTTPS，在勾选【Secure route】后，将展开
 
-### Monitoring/监控
+![](.gitbook/assets/image%20%2811%29.png)
 
-#### D
+我们向看到可以选择的TLS终点模式，非安全链接的控制策略，以及最重要的上传相关证书。
 
-### Catalog/编排商店
+### Resources/Config Maps
 
-#### D
+某些平台服务会用到Config Map，对此可能会需要在Config Maps页面中进行调试。在Config Maps页面中
 
+![](.gitbook/assets/image%20%288%29.png)
 
+一般我们需要点击【Actions】-&gt; 【Edit】按钮，然后在展开的内容页面中，在文本框中编辑value，或者从本地上传新的配置文件
+
+![](.gitbook/assets/image%20%286%29.png)
 

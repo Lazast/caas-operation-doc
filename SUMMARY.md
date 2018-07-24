@@ -2,7 +2,6 @@
 
 * [README](README.md)
 * [Intrudoction](intrudoction.md)
-* [Basics](basics.md)
 * [OpenShift Web Console](openshiftwebconsole.md)
 * [OpenShiftCLI](openshiftcli.md)
 * [ldap](ldap.md)

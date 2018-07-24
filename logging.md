@@ -1,3 +1,7 @@
+---
+description: 在openshift集群下配置elasticsearch、fluentd、kibana集中收集openshift集群日志信息。
+---
+
 # Logging
 
 ### 架构图
@@ -16,9 +20,9 @@ EFK方案：
 
 **Fluentd:** 读取宿主机上的/var/log/message和/var/lib/docker目录下的系统及日志信息，并格式化为json信息 。fluentd采用daemon set方式部署，通过在每一个node部署一个fluentd实例来采集日志并根据配置文件将采集日志内容过滤后输出到目标地址（elasticsearch）
 
-**Elasticsearch:** 开源分布式搜索和分析引擎，负责收到日志信息后，存储信息并建立索引。
+**Elasticsearch:** Elasticsearch是个开源分布式搜索引擎，提供搜集、分析、存储数据三大功能。它的特点有：分布式，零配置，自动发现，索引自动分片，索引副本机制，restful风格接口，多数据源，自动搜索负载等。
 
-**Kibana：** 提供图形界面供用户检索和分析
+**Kibana：** 一个开源和免费的工具，Kibana可以为 Fluent 和 ElasticSearch 提供的日志分析友好的 Web 界面，可以帮助汇总、分析和搜索重要数据日志。
 
 **Curator：** 数据清理器，清理Elasticsearch中过期的数据。
 

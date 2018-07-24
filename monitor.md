@@ -54,7 +54,7 @@ prometheus每一条监控数据格式类似于metrics{label1=value1,label2=value
 
 #### prometheus监控客户端健康检查
 
-访问[http://prometheus\_url/，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus](http://prometheus_url/，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus) 可以从该地址提供的api拉取数据。
+访问`http://prometheus_url`，配置项中的client信息都将在这里展示。state状态（红框部分）为up表明prometheus可以从该地址提供的api拉取数据。
 
 ![](.gitbook/assets/target_check.png)
 
@@ -86,7 +86,7 @@ prometheus每一条监控数据格式类似于metrics{label1=value1,label2=value
 
 #### Alertmanager服务部署健康检查
 
-访问[http://alertmanager\_url，出现如下界面表示服务启动正常](http://alertmanager_url，出现如下界面表示服务启动正常)
+访问`http://alertmanager_url`，出现如下界面表示服务启动正常
 
 ![](.gitbook/assets/alert_healcheck.png)
 
@@ -171,7 +171,7 @@ receivers:
 
 #### Alertmanager 工作原理简述
 
-prometheus server作为监控端服务需要配置相应报警规则模板，当设定指标符合报警条件时，会将报警信息发送至alertmanager进行处理，根据alertmanager配置策略进行报警。涵盖{"platform":"k8s"}标签的报警数据将转由caas平台处理并发送报警信息至通讯媒介（目前支持邮件及手机短信方式，需提供相应服务信息）容器平台可以创建平台部署容器的相关报警项及其阈值。运维管理人员可以通过手动添加方式将报警模板加到prometheus server持久化卷中。添加后需要通过使用post调用[http://prometheus\_url/-/reload接口进行热更新。](http://prometheus_url/-/reload接口进行热更新。)
+prometheus server作为监控端服务需要配置相应报警规则模板，当设定指标符合报警条件时，会将报警信息发送至alertmanager进行处理，根据alertmanager配置策略进行报警。涵盖{"platform":"k8s"}标签的报警数据将转由caas平台处理并发送报警信息至通讯媒介（目前支持邮件及手机短信方式，需提供相应服务信息）容器平台可以创建平台部署容器的相关报警项及其阈值。运维管理人员可以通过手动添加方式将报警模板加到prometheus server持久化卷中。添加后需要通过使用post调用`http://prometheus_url/-/reload`接口进行热更新。
 
 ### Grafana 展示监控数据
 

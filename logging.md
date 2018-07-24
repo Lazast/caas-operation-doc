@@ -78,7 +78,7 @@ elasticsearch服务提供了日志服务的存储和检索。分为两类，一�
 
      ![](.gitbook/assets/es_healthcheck.png)
 2. 运维操作及排查错误
-   * 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时调用api来删除相应日志。heap size调整方式通过设定ENV INSTANCE\_RAM的值进行调整。使用如下命令删除部分日志
+   * 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时调用api来删除相应日志。通过webconsole或cli删除logging-es-data-\<suffix>实例重启，查看重新生成pod的日志信息。es服务启动后（日志中会提示started以及服务端口为9200时表明服务启动）再调用删除接口。heap size调整方式通过设定ENV INSTANCE\_RAM的值进行调整。使用如下命令删除部分日志
 
      ```bash
      curl --key /etc/elasticsearch/secret/admin-key \

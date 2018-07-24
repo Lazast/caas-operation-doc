@@ -38,7 +38,7 @@ Prometheus的主要特征有：
 
 #### label特性及使用
 
-prometheus每一条监控数据格式类似于metrics{label1=value1,label2=value2}。metrics为监控指标名，包含其监控项，例如node\_cpu代表主机cpu使用时间。label代表具体实例信息，例如instance=192.168.1.100、mode=idle，可以得知此条监控数据是ip为192.168.1.100主机CPU的空闲时间。通过label，我们可以将相同名称的指标实例化具体对象，从而可以数据代表的意义，也可以在查询时通过label作为筛选器进行数据筛选。label的使用在openshift中也有广泛的应用，每一类对象均可以定义，并使用。通过选择器指定label，筛选出想要得到的结果。
+prometheus每一条监控数据格式类似于metrics{label1=value1,label2=value2}。metrics为监控指标名，包含其监控项，例如node\_cpu代表主机cpu使用时间。label代表具体实例信息，例如instance=192.168.1.100、mode=idle，可以得知此条监控数据是ip为192.168.1.100主机CPU的空闲时间。通过label，我们可以将相同名称的指标实例化具体对象，从而可以理解数据代表的意义，也可以在查询时通过label作为筛选器进行数据筛选。label的使用在openshift中也有广泛的应用，每一类对象均可以定义并使用。通过选择器指定label，筛选出想要得到的结果。
 
 #### 容器平台应用
 

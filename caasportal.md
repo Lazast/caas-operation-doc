@@ -18,55 +18,54 @@ MySQL：数据持久化存储
 
 除MySQL外，其他组件均为容器部署，容器环境变量信息如下
 
-```text
-组件                变量名                              变量值（//备注)
-caas-agamaha        HCENTER_SERVER                     caas-hcenter    
-                    HCENTER_PORT                       8080    
-                    WEB_SERVER                         caas-haproxy    
-                    WEB_PORT                           8888    
-caas-hcenter        LANG                               C.UTF-8    
-                    EGG_WORKERS                        1    
-                    CAAS_BACKEND                       caas-haproxy    
-                    CAAS_BACKEND_PORT                  8888    
-                    LOGO                               sextant    
-caas-haproxy        WEB_SERVER                         caas-muddle    
-                    WEB_PORT                           8080    
-                    NFS_URL                            10.74.248.252    
-                    NFS_PORT                           8080    
-                    OS_BJ_URL                          os-console.caas.example.com    
-                    LANG                               C.UTF-8    
-                    OMP_SERVER                         caas-omp    
-                    OMP_PORT                           8081    
-caas-muddle         PATH                               /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin    
-                    APPS_HOME                          /AppServer    
-                    TZ                                 Asia/Shanghai    
-                    JAVA_HOME                          /usr/lib/jvm/java-8-openjdk-amd64    
-                    CA_CERTIFICATES_JAVA_VERSION       20140324    
-                    JAVA_OPTS                          -Xmx2048m -Xms2048m    
-                    JAVA_VERSION                       8u111    
-                    LANG                               C.UTF-8    
-                    DB_URL                             jdbc:mysql://10.74.248.254:3306/hcpaas?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true    
-                    REDIS_URL                          caas-redis.caasportal.svc.cluster.local    
-                    REDIS_PORT                         6379    
-                    vol_create_sleep                   5000    
-                    openshift_terminal_url             ws://portalapi.caas.example.com    
-                    hb_info                            YWRtaW46Q2FhczEyMzQ1   (//harbor的admin:passwd的base64加密信息)
-                    JAVA_DEBIAN_VERSION                8u111-b14-2~bpo8+1    
-caas-omp            PATH                               /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin    
-                    APPS_HOME                          /AppServer    
-                    TZ                                 Asia/Shanghai    
-                    JAVA_HOME                          /usr/lib/jvm/java-8-openjdk-amd64    
-                    CA_CERTIFICATES_JAVA_VERSION       20140324    
-                    JAVA_OPTS                          -Xmx2048m -Xms2048m    
-                    JAVA_VERSION                       8u111    
-                    LANG                               C.UTF-8    
-                    spring_datasource_druid_bmp_url    jdbc:mysql://10.74.248.254:3306/hcpaas_bmp?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai    
-                    spring_datasource_druid_portal_url jdbc:mysql://10.74.248.254:3306/hcpaas?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai    
-                    spring_redis_host                  caas-redis    
-                    spring_redis_port                  6379    
-                    spirit_caasUrl                     http://caas-haproxy:8888    
-                    JAVA_DEBIAN_VERSION                8u111-b14-2~bpo8+1
-```
+| 组件 | 变量名 | 变量值（//备注\) |
+| --- | --- | --- |
+| caas-agamaha | HCENTER\_SERVER | caas-hcenter |
+|  | HCENTER\_PORT | 8080 |
+|  | WEB\_SERVER | caas-haproxy |
+|  | WEB\_PORT | 8888 |
+| caas-hcenter | LANG | C.UTF-8 |
+|  | EGG\_WORKERS | 1 |
+|  | CAAS\_BACKEND | caas-haproxy |
+|  | CAAS\_BACKEND\_PORT | 8888 |
+|  | LOGO | sextant |
+| caas-haproxy | WEB\_SERVER | caas-muddle |
+|  | WEB\_PORT | 8080 |
+|  | NFS\_URL | 10.74.248.252 |
+|  | NFS\_PORT | 8080 |
+|  | OS\_BJ\_URL | os-console.caas.example.com |
+|  | LANG | C.UTF-8 |
+|  | OMP\_SERVER | caas-omp |
+|  | OMP\_PORT | 8081 |
+| caas-muddle | PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin |
+|  | APPS\_HOME | /AppServer |
+|  | TZ | Asia/Shanghai |
+|  | JAVA\_HOME | /usr/lib/jvm/java-8-openjdk-amd64 |
+|  | CA\_CERTIFICATES\_JAVA\_VERSION | 20140324 |
+|  | JAVA\_OPTS | -Xmx2048m -Xms2048m |
+|  | JAVA\_VERSION | 8u111 |
+|  | LANG | C.UTF-8 |
+|  | DB\_URL | jdbc:mysql://10.74.248.254:3306/hcpaas?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true |
+|  | REDIS\_URL | caas-redis.caasportal.svc.cluster.local |
+|  | REDIS\_PORT | 6379 |
+|  | vol\_create\_sleep | 5000 |
+|  | openshift\_terminal\_url | ws://portalapi.caas.example.com |
+|  | hb\_info | YWRtaW46Q2FhczEyMzQ1   \(//harbor的admin:passwd的base64加密信息\) |
+|  | JAVA\_DEBIAN\_VERSION | 8u111-b14-2~bpo8+1 |
+| caas-omp | PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin |
+|  | APPS\_HOME | /AppServer |
+|  | TZ | Asia/Shanghai |
+|  | JAVA\_HOME | /usr/lib/jvm/java-8-openjdk-amd64 |
+|  | CA\_CERTIFICATES\_JAVA\_VERSION | 20140324 |
+|  | JAVA\_OPTS | -Xmx2048m -Xms2048m |
+|  | JAVA\_VERSION | 8u111 |
+|  | LANG | C.UTF-8 |
+|  | spring\_datasource\_druid\_bmp\_url | jdbc:mysql://10.74.248.254:3306/hcpaas\_bmp?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai |
+|  | spring\_datasource\_druid\_portal\_url | jdbc:mysql://10.74.248.254:3306/hcpaas?characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai |
+|  | spring\_redis\_host | caas-redis |
+|  | spring\_redis\_port | 6379 |
+|  | spirit\_caasUrl | [http://caas-haproxy:8888](http://caas-haproxy:8888) |
+|  | JAVA\_DEBIAN\_VERSION | 8u111-b14-2~bpo8+1 |
 
 各个组件之间关系如下,右侧虚线框中为其他组件 ![](.gitbook/assets/caas-structure.png)
 

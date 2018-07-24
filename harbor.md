@@ -21,7 +21,7 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 当前部署的是基于harbor 1.4定制开发的版本。
 
-![&#x8FD9;&#x91CC;&#x5199;&#x56FE;&#x7247;&#x63CF;&#x8FF0;](https://img-blog.csdn.net/20170912122844245?/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDI3ODkyMw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![harbor&#x754C;&#x9762;](.gitbook/assets/20170912122844245.jpg)
 
 ### 1.用户管理
 

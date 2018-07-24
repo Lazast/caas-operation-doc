@@ -1,3 +1,5 @@
+# ldap
+
 ## LDAP简介
 
 LDAP是轻量目录访问协议，英文全称是Lightweight Directory Access Protocol，一般都简称为ldap。ldap以树状结构存储数据，非常适合存储大量数据，而且数据不经常修改，但是需要快速查询的场景，比如业务系统的鉴权操作。

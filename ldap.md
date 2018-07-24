@@ -2,14 +2,14 @@
 
 LDAP是轻量目录访问协议，英文全称是Lightweight Directory Access Protocol，一般都简称为ldap。ldap以树状结构存储数据，非常适合存储大量数据，而且数据不经常修改，但是需要快速查询的场景，比如业务系统的鉴权操作。 
 
-ldap支持TCP/IP协议，分为server 端和client端，server端用来存储数据，client用来增删查改数据，监听端口为389，加密端口为636。其数据存储结构完全体现了树状的特点： 
-    ```
-    ldap树形结构
-    dn：表示ldap内条目具体位置,比如 dn: cn=admin,ou=users,dc=baifendian,dc=com；
-    dc：表示条目所属的区域；
-    ou：表示组织单元；
-    cn/uid：表示一条记录具体的名字；
-    ```
+ldap支持TCP/IP协议，分为server 端和client端，server端用来存储数据，client用来增删查改数据，监听端口为389，加密端口为636。其数据存储结构完全体现了树状的特点:
+```
+ldap树形结构
+dn：表示ldap内条目具体位置,比如 dn: cn=admin,ou=users,dc=baifendian,dc=com；
+dc：表示条目所属的区域；
+ou：表示组织单元；
+cn/uid：表示一条记录具体的名字。
+```
 
 ## caas生产环境ldap安装
 

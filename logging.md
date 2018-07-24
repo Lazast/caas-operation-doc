@@ -63,7 +63,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
 
 调整fluentd运行参数及其他配置需修改fluentd配置文件。登录OpenShift webconsole进入logging命名空间下选择resources--&gt;other resources--&gt;daemon set可以看到fluentd对象实例。通过actions中的edit yaml来编辑fluentd的daemon set对象。
 
-## elasticsearch
+### elasticsearch
 
 elasticsearch服务提供了日志服务的存储和检索。分为两类，一是负责容器日志的es实例（集群），二是负责系统日志的es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-&lt;suffix&gt;为容器日志es实例，logging-es-ops-data-&lt;suffix&gt;为系统日志es实例。集群模式时，实例个数等于集群配置个数。
 
@@ -103,7 +103,7 @@ elasticsearch服务提供了日志服务的存储和检索。分为两类，一�
    * 重启es实例可以通过OpenShift web console或CLI删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
    * es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在web console或CLI执行部署操作。
 
-## kibana
+### kibana
 
 kibana作为日志的展示模块，常常用于运维人员或拥有使用kibana技能的用户。kibana具有通过向es实例（集群）获取日志数据并进行展示、聚合、统计等功能。EFK日志系统部署完成后通过访问`https://kibana_url`来进行访问。同时该模块集成了OpenShift认证模块。因此使用kibana工具时，需要进行用户验证。用户名及密码等同于OpenShift平台用户。用户可以通过caas前端创建push构建查看到相应用户名及密码或向管理员询问相关信息。admin用户可以查看所用用户命名空间下所采集到的日志。普通用户只可查看个人命名空间下日志内容。
 

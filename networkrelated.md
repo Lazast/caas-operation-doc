@@ -123,10 +123,13 @@ tcpdump -tnni ethX tcp and src host 192.168.1.100 and dst port 80
 tcpdump -tnni ethX tcp and src net 192.168.2.0/24 and dst port 3306
 
 # 检查某节点（192.168.3.101）上是否有数据包通过VXLAN隧道发向某一目标节点（192.168.3.102）
-tcpdump -tnni ethX src host 192.168.3.101 and dst host 192.168.3.102 -P out | grep VXLAN
+tcpdump -tnni ethX src host 192.168.3.101 and dst host 192.168.3.102 -P out | grep \
+    VXLAN
 
-# 检查某节点（192.168.3.101）上Pod（10.128.4.100）是否有数据包通过VXLAN隧道发向某一目标节点（192.168.3.102）
-tcpdump -tnni ethX src host 192.168.3.101 and dst host 192.168.3.102 -P out | grep 10.128.4.100
+# 检查某节点（192.168.3.101）上Pod（10.128.4.100）是否有数据包通过VXLAN隧道发向
+# 某一目标节点（192.168.3.102）
+tcpdump -tnni ethX src host 192.168.3.101 and dst host 192.168.3.102 -P out | grep \
+    10.128.4.100
 
 # 检查Pod发出的DNS请求
 tcpdump -tnni vethXXX port 53
@@ -145,7 +148,10 @@ ethX在实际环境中可能包含三类端口:
 >
 >   ```text
 >   # 根据实际情况，将10.128.0.211替换为实际IP，注意：需要在Pod所在节点执行该命令
->   echo "10.128.0.211" | xargs -I{} ovs-ofctl -O OpenFlow13 dump-flows br0 "table=70,ip,nw_dst={}" | cut -d ':' -f 3 | cut -d '-' -f 1 | xargs -I{} printf "%d" {} | xargs -I{} ovs-vsctl find interface ofport={} | awk -F'"' '/name /{print $2}'
+>   echo "10.128.0.211" | xargs -I{} ovs-ofctl -O OpenFlow13 dump-flows br0 \
+>       "table=70,ip,nw_dst={}" | cut -d ':' -f 3 | cut -d '-' -f 1 | \
+>       xargs -I{} printf "%d" {} | xargs -I{} ovs-vsctl find interface ofport={} | \
+>       awk -F'"' '/name /{print $2}'
 >   ```
 
 关于VXLAN的抓包，通过计算UDP包的数据偏移位与协议等信息是可以指定只抓取VXLAN包的，但是实际中通过grep方法来的更容易且基本不会出错，因此建议通过grep来检查VXLAN包。

@@ -6,7 +6,7 @@ VMware公司开源的企业级Registry项目[Harbor](https://github.com/vmware/h
 
 ## Harbor架构
 
-![harbor&#x67B6;&#x6784;](.gitbook/assets/20170912121921883.txt)
+![](.gitbook/assets/20170912121921883.jpg)
 
 主要组件包括：
 

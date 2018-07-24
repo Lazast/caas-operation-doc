@@ -48,7 +48,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
    2016-02-19 20:40:44 +0000 [info]: reading config file path="/etc/fluent/fluent.conf"
    ```
 
-2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift平台进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）登录OpenShift平台后使用"oc rsh"命令
+2. 进入elasticsearch容器实例执行如下命令查看是否有数据生成。通过OpenShift web console进入elasticsearch（logging-es-data-\）容器实例或使用本地终端客户端（xshell/iterm）在登录OpenShift平台后使用命令"oc rsh logging-es-data-\*"进入容器实例，然后运行如下命令
 
    ```bash
    curl --key /etc/elasticsearch/secret/admin-key \
@@ -61,7 +61,7 @@ Fluentd服务部署完成后，实例个数取决于集群的节点个数。每�
 
 ## elasticsearch
 
-elasticsearch服务日志服务的存储和检索。分为两类，一是容器日志es实例（集群），而是系统日志es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\为容器日志es，logging-es-ops-data-\为系统日志es。集群模式时，实例个数等于集群配置个数。
+elasticsearch服务提供了日志服务的存储和检索。分为两类，一是负责容器日志的es实例（集群），二是负责系统日志的es实例（集群）。生产环境建议使用es集群模式，可以保障数据安全性以及高可用。es数据存储不支持nfs持久化卷方式。因此采用本机hostpath方式挂载。建议日志存储设备采用ssd或其他高性能存储设备（磁盘io压力大）。根据pod名称可以区分es实例存储用途。logging-es-data-\为容器日志es实例，logging-es-ops-data-\为系统日志es实例。集群模式时，实例个数等于集群配置个数。
 
 1. 监控检查：
    * 容器启动后，检查实例日志，无报错即可
@@ -78,7 +78,7 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
 
      ![](.gitbook/assets/es_healthcheck.png)
 2. 运维操作及排查错误
-   * 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时通过api删除相应日志。heap size调整方式通过设定ENV INSTANCE\_RAM的值进行调整。使用如下命令删除部分日志
+   * 查看容器日志有无异常报错，通常当一个节点数据过多可能会引起es实例超负载而引起容器无休止重启。解决办法通过调整heap size或者使用es集群模式。如无法修复此问题，可通过es实例启动恢复数据时调用api来删除相应日志。heap size调整方式通过设定ENV INSTANCE\_RAM的值进行调整。使用如下命令删除部分日志
 
      ```bash
      curl --key /etc/elasticsearch/secret/admin-key \
@@ -96,8 +96,8 @@ elasticsearch服务日志服务的存储和检索。分为两类，一是容器�
      通过选定项目名称、项目ID、日期进行有筛选的删除相应索引达到降低es实例负载
 
    * 组件curator部署后会定期删除旧时日志。因为集群发生问题可能性较小。
-   * 重启es实例可以通过OpenShift webconsole或cli删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
-   * es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在webconsole或cli执行部署操作。
+   * 重启es实例可以通过OpenShift web console或CLI删除相应pod即可重启服务。切记持久化卷已挂载到数据目录。
+   * es实例（集群）部署方式为手动触发，即修改过deployments文件后需要在web console或CLI执行部署操作。
 
 ## kibana
 

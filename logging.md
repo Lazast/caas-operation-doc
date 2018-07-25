@@ -1,8 +1,6 @@
----
-description: 在openshift集群下配置elasticsearch、fluentd、kibana集中收集openshift集群日志信息。
----
-
 # Logging
+
+在openshift集群下配置elasticsearch、fluentd、kibana集中收集openshift集群日志信息。
 
 ### 架构图
 

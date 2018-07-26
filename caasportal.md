@@ -52,6 +52,8 @@ MySQL：数据持久化存储
 |  | openshift\_terminal\_url | ws://portalapi.caas.example.com |
 |  | hb\_info | YWRtaW46Q2FhczEyMzQ1   \(//harbor的admin:passwd的base64加密信息\) |
 |  | JAVA\_DEBIAN\_VERSION | 8u111-b14-2~bpo8+1 |
+|  | DB\_USERNAME |默认root |
+|  | DB\_PWD | 默认adminpwd |
 | caas-omp | PATH | /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin |
 |  | APPS\_HOME | /AppServer |
 |  | TZ | Asia/Shanghai |
